@@ -1,0 +1,785 @@
+{
+  "database": "admin_panel",
+  "version": "1.3.0",
+  "description": "MongoDB schema for Next.js Admin Panel",
+  "collections": [
+    {
+      "name": "users",
+      "description": "User accounts and profiles",
+      "indexes": [
+        {
+          "fields": {
+            "email": 1
+          },
+          "options": {
+            "unique": true
+          }
+        },
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "name",
+            "email",
+            "role",
+            "status",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "name": {
+              "bsonType": "string",
+              "description": "User's full name"
+            },
+            "email": {
+              "bsonType": "string",
+              "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+              "description": "User's email address (unique)"
+            },
+            "password": {
+              "bsonType": "string",
+              "description": "Hashed password (bcrypt)"
+            },
+            "role": {
+              "enum": [
+                "admin",
+                "user",
+                "moderator"
+              ],
+              "description": "User role for permissions"
+            },
+            "status": {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "description": "Account status"
+            },
+            "avatar": {
+              "bsonType": "string",
+              "description": "URL to user avatar image"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Account creation timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "password": "$2a$10$...",
+        "role": "user",
+        "status": "active",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    },
+    {
+      "name": "activities",
+      "description": "User activity logs and audit trail",
+      "indexes": [
+        {
+          "fields": {
+            "timestamp": -1
+          }
+        },
+        {
+          "fields": {
+            "userId": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "userId",
+            "action",
+            "description",
+            "timestamp"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "userId": {
+              "bsonType": "objectId",
+              "description": "Reference to user who performed the action"
+            },
+            "action": {
+              "bsonType": "string",
+              "description": "Type of action performed"
+            },
+            "description": {
+              "bsonType": "string",
+              "description": "Human-readable description of the action"
+            },
+            "timestamp": {
+              "bsonType": "date",
+              "description": "When the action occurred"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "userId": "ObjectId('...')",
+        "action": "user.created",
+        "description": "Created new user account",
+        "timestamp": "2024-01-15T10:30:00.000Z"
+      }
+    },
+    {
+      "name": "blogs",
+      "description": "Blog posts and articles",
+      "indexes": [
+        {
+          "fields": {
+            "slug": 1
+          },
+          "options": {
+            "unique": true
+          }
+        },
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        },
+        {
+          "fields": {
+            "status": 1
+          }
+        },
+        {
+          "fields": {
+            "tags": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "title",
+            "slug",
+            "content",
+            "excerpt",
+            "author",
+            "status",
+            "tags",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "title": {
+              "bsonType": "string",
+              "description": "Blog post title"
+            },
+            "slug": {
+              "bsonType": "string",
+              "description": "URL-friendly slug (unique)"
+            },
+            "content": {
+              "bsonType": "string",
+              "description": "Full blog post content (markdown or HTML)"
+            },
+            "excerpt": {
+              "bsonType": "string",
+              "description": "Short summary or preview text"
+            },
+            "author": {
+              "bsonType": "string",
+              "description": "Author name"
+            },
+            "status": {
+              "enum": [
+                "draft",
+                "published",
+                "archived"
+              ],
+              "description": "Publication status"
+            },
+            "featuredImage": {
+              "bsonType": "string",
+              "description": "URL to featured image"
+            },
+            "tags": {
+              "bsonType": "array",
+              "items": {
+                "bsonType": "string"
+              },
+              "description": "Array of tags for categorization"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Creation timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            },
+            "publishedAt": {
+              "bsonType": "date",
+              "description": "Publication timestamp"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "title": "Getting Started with Next.js",
+        "slug": "getting-started-nextjs",
+        "content": "Full blog content here...",
+        "excerpt": "Learn the basics of Next.js",
+        "author": "John Doe",
+        "status": "published",
+        "featuredImage": "https://example.com/image.jpg",
+        "tags": [
+          "nextjs",
+          "react",
+          "tutorial"
+        ],
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z",
+        "publishedAt": "2024-01-15T10:30:00.000Z"
+      }
+    },
+    {
+      "name": "services",
+      "description": "Services and offerings",
+      "indexes": [
+        {
+          "fields": {
+            "slug": 1
+          },
+          "options": {
+            "unique": true
+          }
+        },
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        },
+        {
+          "fields": {
+            "status": 1
+          }
+        },
+        {
+          "fields": {
+            "category": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "name",
+            "slug",
+            "description",
+            "shortDescription",
+            "price",
+            "currency",
+            "status",
+            "category",
+            "features",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "name": {
+              "bsonType": "string",
+              "description": "Service name"
+            },
+            "slug": {
+              "bsonType": "string",
+              "description": "URL-friendly slug (unique)"
+            },
+            "description": {
+              "bsonType": "string",
+              "description": "Full service description"
+            },
+            "shortDescription": {
+              "bsonType": "string",
+              "description": "Brief summary for cards/listings"
+            },
+            "price": {
+              "bsonType": "number",
+              "description": "Service price"
+            },
+            "currency": {
+              "bsonType": "string",
+              "description": "Currency code (USD, EUR, GBP, etc.)"
+            },
+            "status": {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "description": "Service availability status"
+            },
+            "category": {
+              "bsonType": "string",
+              "description": "Service category"
+            },
+            "features": {
+              "bsonType": "array",
+              "items": {
+                "bsonType": "string"
+              },
+              "description": "Array of service features"
+            },
+            "icon": {
+              "bsonType": "string",
+              "description": "URL to service icon/image"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Creation timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "name": "Web Development",
+        "slug": "web-development",
+        "description": "Full-stack web development services...",
+        "shortDescription": "Custom web applications",
+        "price": 5000,
+        "currency": "USD",
+        "status": "active",
+        "category": "Development",
+        "features": [
+          "Responsive Design",
+          "SEO Optimization",
+          "API Integration"
+        ],
+        "icon": "https://example.com/icon.svg",
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    },
+    {
+      "name": "appointments",
+      "description": "Appointment booking requests and scheduling",
+      "indexes": [
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        },
+        {
+          "fields": {
+            "status": 1
+          }
+        },
+        {
+          "fields": {
+            "preferredDate": 1
+          }
+        },
+        {
+          "fields": {
+            "email": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "name",
+            "email",
+            "phone",
+            "service",
+            "preferredDate",
+            "preferredTime",
+            "status",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "name": {
+              "bsonType": "string",
+              "description": "Client's full name"
+            },
+            "email": {
+              "bsonType": "string",
+              "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+              "description": "Client's email address"
+            },
+            "phone": {
+              "bsonType": "string",
+              "description": "Client's phone number"
+            },
+            "service": {
+              "bsonType": "string",
+              "description": "Requested service type"
+            },
+            "preferredDate": {
+              "bsonType": "date",
+              "description": "Client's preferred appointment date"
+            },
+            "preferredTime": {
+              "bsonType": "string",
+              "description": "Client's preferred appointment time (HH:MM format)"
+            },
+            "message": {
+              "bsonType": "string",
+              "description": "Additional message or notes from client"
+            },
+            "status": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "completed"
+              ],
+              "description": "Appointment status"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Request submission timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            },
+            "reviewedAt": {
+              "bsonType": "date",
+              "description": "When the appointment was reviewed by admin"
+            },
+            "reviewedBy": {
+              "bsonType": "string",
+              "description": "Admin user who reviewed the appointment"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "name": "John Smith",
+        "email": "john.smith@example.com",
+        "phone": "+1 (555) 123-4567",
+        "service": "consultation",
+        "preferredDate": "2025-01-15T00:00:00.000Z",
+        "preferredTime": "10:00",
+        "message": "I would like to discuss a new website project.",
+        "status": "pending",
+        "createdAt": "2025-01-10T09:30:00.000Z",
+        "updatedAt": "2025-01-10T09:30:00.000Z"
+      }
+    },
+    {
+      "name": "media",
+      "description": "Media library for uploaded images and files",
+      "indexes": [
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        },
+        {
+          "fields": {
+            "fileName": 1
+          },
+          "options": {
+            "unique": true
+          }
+        },
+        {
+          "fields": {
+            "mimeType": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "fileName",
+            "originalName",
+            "url",
+            "size",
+            "mimeType",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "fileName": {
+              "bsonType": "string",
+              "description": "Unique filename in storage (timestamp-based)"
+            },
+            "originalName": {
+              "bsonType": "string",
+              "description": "Original filename from upload"
+            },
+            "url": {
+              "bsonType": "string",
+              "description": "Public URL to access the file (Cloudflare R2)"
+            },
+            "size": {
+              "bsonType": "number",
+              "description": "File size in bytes"
+            },
+            "mimeType": {
+              "bsonType": "string",
+              "description": "MIME type (e.g., image/jpeg, image/png)"
+            },
+            "alt": {
+              "bsonType": "string",
+              "description": "Alt text for accessibility"
+            },
+            "caption": {
+              "bsonType": "string",
+              "description": "Optional caption or description"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Upload timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "fileName": "1704067200000-hero-image.jpg",
+        "originalName": "hero-image.jpg",
+        "url": "https://your-domain.com/1704067200000-hero-image.jpg",
+        "size": 245678,
+        "mimeType": "image/jpeg",
+        "alt": "Modern office workspace",
+        "caption": "Professional workspace setup",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "activities.userId",
+      "to": "users._id",
+      "type": "many-to-one",
+      "description": "Each activity belongs to one user"
+    },
+    {
+      "from": "blogs.featuredImage",
+      "to": "media.url",
+      "type": "many-to-one",
+      "description": "Blog posts can reference media library images"
+    },
+    {
+      "from": "services.icon",
+      "to": "media.url",
+      "type": "many-to-one",
+      "description": "Services can reference media library images"
+    },
+    {
+      "name": "student_counseling",
+      "description": "Student counseling form submissions",
+      "indexes": [
+        {
+          "fields": {
+            "createdAt": -1
+          }
+        },
+        {
+          "fields": {
+            "email": 1
+          }
+        },
+        {
+          "fields": {
+            "status": 1
+          }
+        }
+      ],
+      "validation": {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "fullName",
+            "contact",
+            "email",
+            "status",
+            "createdAt",
+            "updatedAt"
+          ],
+          "properties": {
+            "_id": {
+              "bsonType": "objectId",
+              "description": "Unique identifier"
+            },
+            "howDidYouKnow": {
+              "bsonType": "string",
+              "description": "How the student learned about the consultancy"
+            },
+            "referredBy": {
+              "bsonType": "string",
+              "description": "Referral source"
+            },
+            "fullName": {
+              "bsonType": "string",
+              "description": "Student's full name"
+            },
+            "contact": {
+              "bsonType": "string",
+              "description": "Contact number"
+            },
+            "email": {
+              "bsonType": "string",
+              "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$",
+              "description": "Student's email address"
+            },
+            "address": {
+              "bsonType": "string",
+              "description": "Student's address"
+            },
+            "interestedCountry": {
+              "bsonType": "string",
+              "description": "Country of interest for study"
+            },
+            "university": {
+              "bsonType": "string",
+              "description": "Preferred university"
+            },
+            "intake": {
+              "bsonType": "string",
+              "description": "Preferred intake period"
+            },
+            "interestedCourse": {
+              "bsonType": "string",
+              "description": "Course of interest"
+            },
+            "lastAcademicQualification": {
+              "bsonType": "string",
+              "description": "Most recent academic qualification"
+            },
+            "academicScores": {
+              "bsonType": "string",
+              "description": "Academic scores/grades"
+            },
+            "englishTest": {
+              "bsonType": "string",
+              "description": "English proficiency test (IELTS, TOEFL, etc.)"
+            },
+            "englishScores": {
+              "bsonType": "string",
+              "description": "English test scores"
+            },
+            "passedYear": {
+              "bsonType": "string",
+              "description": "Year of last qualification"
+            },
+            "yearIntake": {
+              "bsonType": "string",
+              "description": "Intended year of intake"
+            },
+            "status": {
+              "enum": [
+                "pending",
+                "contacted",
+                "in-progress",
+                "completed",
+                "rejected"
+              ],
+              "description": "Counseling request status"
+            },
+            "createdAt": {
+              "bsonType": "date",
+              "description": "Submission timestamp"
+            },
+            "updatedAt": {
+              "bsonType": "date",
+              "description": "Last update timestamp"
+            }
+          }
+        }
+      },
+      "sampleDocument": {
+        "_id": "ObjectId('...')",
+        "howDidYouKnow": "Social Media",
+        "referredBy": "Friend",
+        "fullName": "Jane Smith",
+        "contact": "+977-9841234567",
+        "email": "jane@example.com",
+        "address": "Kathmandu, Nepal",
+        "interestedCountry": "UK",
+        "university": "University of London",
+        "intake": "September 2024",
+        "interestedCourse": "Computer Science",
+        "lastAcademicQualification": "Bachelor's Degree",
+        "academicScores": "3.5 GPA",
+        "englishTest": "IELTS",
+        "englishScores": "7.0",
+        "passedYear": "2023",
+        "yearIntake": "2024",
+        "status": "pending",
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      }
+    }
+  ],
+  "notes": [
+    "All passwords are hashed using bcrypt with 10 salt rounds",
+    "Timestamps are stored in UTC",
+    "Email addresses are unique across the users collection",
+    "Blog slugs and service slugs must be unique for URL routing",
+    "Tags in blogs are stored as arrays for flexible categorization",
+    "Service features are stored as arrays for easy display",
+    "Avatar URLs use DiceBear API for consistent placeholder images",
+    "Appointment status workflow: pending → approved/rejected → completed",
+    "Appointments can be filtered by status, date, and service type",
+    "Media files are stored in Cloudflare R2 with public URLs",
+    "Media filenames are unique and timestamp-based to prevent collisions",
+    "Supported image formats: JPEG, PNG, GIF, WebP (max 5MB per file)",
+    "Media library integrates with blogs and services for image selection"
+  ]
+}

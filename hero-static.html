@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unity Group Hero Section</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #dc2626;
+            /* red-600 */
+            --secondary: #1e3a8a;
+            /* blue-900 */
+            --text-dark: #0f172a;
+            /* blue-950 */
+            --text-gray: #64748b;
+            /* gray-500 */
+            --bg-gradient: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-gradient);
+            padding: 80px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            line-height: 1.1;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.05em;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title {
+                font-size: 4.5rem;
+            }
+        }
+
+        .badge-edu {
+            position: relative;
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.2);
+            display: inline-block;
+            font-size: 1.5rem;
+            margin-top: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .badge-edu {
+                font-size: 3.75rem;
+            }
+        }
+
+        .hero-description {
+            max-width: 42rem;
+            margin: 24px auto 0;
+            font-size: 1.125rem;
+            color: var(--text-gray);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        @media (min-width: 768px) {
+            .hero-description {
+                font-size: 1.25rem;
+            }
+        }
+
+        .hero-image-wrapper {
+            margin-top: 40px;
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Floating Badges */
+        .floating-badge {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            padding: 16px;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 20;
+            animation: bounce 3s infinite ease-in-out;
+        }
+
+        .badge-1 {
+            top: 40px;
+            left: 40px;
+        }
+
+        .badge-2 {
+            bottom: 40px;
+            right: 40px;
+            animation-delay: 1.5s;
+        }
+
+        .floating-badge .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .floating-badge .label {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .cta-group {
+            margin-top: 48px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            box-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .btn-outline:hover {
+            background: #fef2f2;
+            transform: translateY(-2px);
+        }
+
+        /* Background blur circles */
+        .blur-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .circle-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(30, 58, 138, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .floating-badge {
+                padding: 10px;
+            }
+
+            .badge-1 {
+                left: 10px;
+                top: 10px;
+            }
+
+            .badge-2 {
+                right: 10px;
+                bottom: 10px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero">
+        <!-- Background Decorations -->
+        <div class="blur-circle circle-1"></div>
+        <div class="blur-circle circle-2"></div>
+
+        <div class="container">
+            <!-- Content -->
+            <h1 class="hero-title">
+                Unity: Group <br>
+                <span class="badge-edu">Edu Group</span>
+            </h1>
+
+            <p class="hero-description">
+                Architecting your global academic journey with precision and care. Welcome to
+                <span style="color: #1e3a8a; font-weight: 700;">Unity Group</span>, your gateway to prestigious
+                universities worldwide.
+            </p>
+
+            <!-- Image & Floating Elements -->
+            <div class="hero-image-wrapper">
+                <!-- Replace with your actual image path -->
+                <img src="web 1.png" alt="University Campus">
+
+                <div class="floating-badge badge-1">
+                    <span class="number">40+</span>
+                    <span class="label">partner universities</span>
+                </div>
+
+                <div class="floating-badge badge-2">
+                    <span class="number">12+ years</span>
+                    <span class="label">of experience</span>
+                </div>
+            </div>
+
+            <!-- Call to Actions -->
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">Learn More</a>
+                <a href="#" class="btn btn-outline">Apply Now</a>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
