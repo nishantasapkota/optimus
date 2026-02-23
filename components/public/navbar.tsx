@@ -43,8 +43,8 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
     <header 
       className={cn(
         "w-full fixed top-0 z-[5000] transition-all duration-500",
-        isScrolled 
-          ? "bg-white/90 backdrop-blur-xl shadow-2xl py-2 border-b border-gray-100" 
+        isScrolled
+          ? "bg-background/90 backdrop-blur-xl shadow-2xl py-2 border-b border-border"
           : "bg-transparent py-4"
       )}
     >
@@ -60,7 +60,7 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
                 className={cn("object-contain", (!isDarkText) && "brightness-0 invert")} 
               />
             ) : (
-              <div className="h-10 w-10 rounded-xl bg-red-600 flex items-center justify-center text-white  font-bold transform -skew-x-6 shadow-lg shadow-red-600/20">
+              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold transform -skew-x-6 shadow-lg shadow-primary/20">
                 {firstName[0]}
               </div>
             )}
@@ -69,7 +69,7 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
         
         <nav className={cn(
           "hidden lg:flex items-center gap-8 text-sm  font-bold capitalize  transition-colors duration-500",
-          isDarkText ? "text-blue-950" : "text-white"
+          isDarkText ? "text-foreground" : "text-white"
         )}>
           {[
             { name: "Home", href: "/" },
@@ -84,10 +84,10 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
             <Link 
               key={item.name}
               href={item.href} 
-              className="hover:text-red-600 transition-colors relative group py-2 whitespace-nowrap"
+              className="hover:text-primary transition-colors relative group py-2 whitespace-nowrap"
             >
               {item.name}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
             </Link>
           ))}
         </nav>
@@ -97,8 +97,8 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
               <Button className={cn(
                 "rounded-full px-8 h-11 font-semibold uppercase tracking-widest text-[10px] transition-all duration-500",
                 isDarkText 
-                  ? "bg-red-600 hover:bg-blue-950 text-white shadow-xl shadow-red-600/20" 
-                  : "bg-white hover:bg-red-600 text-blue-950 hover:text-white"
+                  ? "bg-primary hover:bg-secondary text-primary-foreground shadow-xl shadow-primary/20"
+                  : "bg-white/95 hover:bg-primary text-primary hover:text-primary-foreground"
               )}>
                 Register
               </Button>

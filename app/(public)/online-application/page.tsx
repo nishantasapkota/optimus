@@ -393,14 +393,17 @@ export default function OnlineApplicationPage() {
                       className="bg-white h-16 rounded-2xl border border-slate-200 px-6 text-sm font-semibold text-slate-900 shadow-sm placeholder:text-slate-400 focus-visible:border-rose-300 focus-visible:ring-4 focus-visible:ring-rose-100 transition-all outline-none" 
                     />
                   </div>
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-slate-600 ml-1">Preferred University</label>
+                  <div className="space-y-3 rounded-2xl border border-rose-200 bg-rose-50/60 p-4 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-slate-700">Preferred University</label>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-rose-500">Optional</span>
+                    </div>
                     <Input 
                       name="university"
                       value={formData.university}
                       onChange={handleChange}
                       placeholder="e.g. University of Manchester" 
-                      className="bg-white h-16 rounded-2xl border border-slate-200 px-6 text-sm font-semibold text-slate-900 shadow-sm placeholder:text-slate-400 focus-visible:border-rose-300 focus-visible:ring-4 focus-visible:ring-rose-100 transition-all outline-none" 
+                      className="bg-white h-16 rounded-2xl border border-rose-200 px-6 text-sm font-semibold text-slate-900 shadow-sm placeholder:text-slate-400 focus-visible:border-rose-300 focus-visible:ring-4 focus-visible:ring-rose-100 transition-all outline-none" 
                     />
                   </div>
                   <div className="space-y-3">

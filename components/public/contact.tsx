@@ -3,8 +3,13 @@
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Send } from "lucide-react"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-export function Contact() {
+type ContactContent = HomePageContent["contact"]
+
+export function Contact({ content }: { content?: ContactContent }) {
+  const section = content ?? homeDefaultContent.contact
+
   return (
     <section className="py-20 bg-white">
       <div className="container">
@@ -14,7 +19,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block"
           >
-            Contact
+            {section.eyebrow}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -22,10 +27,10 @@ export function Contact() {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold text-blue-950 mb-4"
           >
-            Contact Us
+            {section.title}
           </motion.h2>
           <p className="max-w-2xl mx-auto text-gray-500 font-medium">
-             Reach out to us for any inquiries or support throughout your journey.
+             {section.description}
           </p>
         </div>
 
@@ -51,7 +56,7 @@ export function Contact() {
                 <textarea rows={6} placeholder="Message" className="w-full px-4 py-4 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-blue-200 outline-none transition-all text-sm shadow-sm resize-none" />
               </div>
               <Button className="bg-red-600 hover:bg-red-700 text-white px-10 py-7 rounded-xl text-lg font-bold shadow-lg shadow-red-600/20 transition-all flex items-center gap-3">
-                Send Message
+                {section.submitLabel}
                 <Send className="w-5 h-5" />
               </Button>
             </form>
@@ -93,12 +98,12 @@ export function Contact() {
 
              {/* Bottom Overlay Info */}
              <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl flex items-center gap-6">
-                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
+               <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
                     <Send className="w-6 h-6" />
                 </div>
                 <div>
-                   <p className="text-xs text-gray-500 font-bold uppercase">Success Rate</p>
-                   <p className="text-lg font-black text-blue-900">98% Satisfied Students</p>
+                   <p className="text-xs text-gray-500 font-bold uppercase">{section.mapStatLabel}</p>
+                   <p className="text-lg font-black text-blue-900">{section.mapStatValue}</p>
                 </div>
              </div>
           </motion.div>

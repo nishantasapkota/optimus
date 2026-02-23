@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 import { motion } from "framer-motion"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
 interface TestimonialData {
   _id: string
@@ -12,9 +13,14 @@ interface TestimonialData {
   image: string
 }
 
-export function Testimonials() {
+export function Testimonials({ content }: { content?: HomePageContent["testimonials"] }) {
+  return <TestimonialsContent content={content} />
+}
+
+function TestimonialsContent({ content }: { content?: HomePageContent["testimonials"] }) {
   const [testimonials, setTestimonials] = useState<TestimonialData[]>([])
   const [loading, setLoading] = useState(true)
+  const section = content ?? homeDefaultContent.testimonials
 
   useEffect(() => {
     async function fetchTestimonials() {
@@ -72,7 +78,7 @@ export function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-red-600 font-bold uppercase tracking-widest text-sm mb-4 block"
           >
-            Success Stories
+            {section.eyebrow}
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +86,7 @@ export function Testimonials() {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl  font-bold text-blue-900 mb-6 tracking-tight"
           >
-            Voice of Our <span className="text-red-600">Scholars</span>
+            {section.titlePrefix} <span className="text-red-600">{section.titleHighlight}</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -88,7 +94,7 @@ export function Testimonials() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-gray-600 text-lg leading-relaxed"
           >
-            Real experiences from students who transformed their global education dreams into reality with Unity Group.
+            {section.description}
           </motion.p>
         </div>
 

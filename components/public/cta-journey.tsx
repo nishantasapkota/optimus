@@ -3,8 +3,13 @@
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-export function CtaJourney() {
+type CtaJourneyContent = HomePageContent["ctaJourney"]
+
+export function CtaJourney({ content }: { content?: CtaJourneyContent }) {
+  const section = content ?? homeDefaultContent.ctaJourney
+
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background Image/Overlay */}
@@ -24,15 +29,15 @@ export function CtaJourney() {
           className="max-w-3xl mx-auto space-y-8"
         >
           <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight">
-            Book a free consultation
+            {section.title}
           </h2>
           <p className="text-xl text-blue-100 font-medium opacity-90">
-            Take the first step towards your global education destiny. Our expertos are here to guide you through every step of the process.
+            {section.description}
           </p>
           <div className="pt-4">
             <Link href="/appointment">
               <Button className="bg-white hover:bg-gray-100 text-blue-900 px-10 py-7 text-lg font-bold rounded-xl shadow-2xl transition-all">
-                Start Your Journey With Us
+                {section.buttonLabel}
               </Button>
             </Link>
           </div>

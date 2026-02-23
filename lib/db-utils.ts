@@ -888,3 +888,31 @@ export async function deleteBODMember(id: string) {
   const db = await getDatabase()
   return await db.collection<BODMember>("bod_members").deleteOne({ _id: new ObjectId(id) })
 }
+
+// Page content operations
+export interface PageContentDoc {
+  _id?: ObjectId
+  slug: string
+  content: Record<string, any>
+  updatedAt: Date
+}
+
+export async function getPageContent(slug: string) {
+  const db = await getDatabase()
+  return await db.collection<PageContentDoc>("page_contents").findOne({ slug })
+}
+
+export async function upsertPageContent(slug: string, content: Record<string, any>) {
+  const db = await getDatabase()
+  return await db.collection<PageContentDoc>("page_contents").updateOne(
+    { slug },
+    {
+      $set: {
+        slug,
+        content,
+        updatedAt: new Date(),
+      },
+    },
+    { upsert: true }
+  )
+}

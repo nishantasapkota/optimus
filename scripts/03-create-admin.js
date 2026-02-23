@@ -4,7 +4,19 @@
 const { MongoClient } = require("mongodb")
 
 const uri = process.env.MONGODB_URI || "mongodb://localhost:27017"
-const dbName = "admin_panel"
+const dbName =
+  process.env.MONGODB_DB ||
+  (() => {
+    const match = uri.match(/\/([^/?]+)(\?|$)/)
+    if (match && match[1]) {
+      try {
+        return decodeURIComponent(match[1])
+      } catch {
+        return match[1]
+      }
+    }
+    return "admin_panel"
+  })()
 
 async function createAdmin() {
   const client = new MongoClient(uri)

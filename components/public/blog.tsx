@@ -7,18 +7,21 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react"
 import { Blog as BlogType } from "@/lib/db-utils"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
 interface BlogProps {
   initialBlogs?: BlogType[]
   initialTotal?: number
+  content?: HomePageContent["blog"]
 }
 
-export function Blog({ initialBlogs = [], initialTotal = 0 }: BlogProps) {
+export function Blog({ initialBlogs = [], initialTotal = 0, content }: BlogProps) {
   const [blogs, setBlogs] = useState<BlogType[]>(initialBlogs)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(Math.ceil(initialTotal / 3))
   const [loading, setLoading] = useState(false)
   const limit = 3
+  const section = content ?? homeDefaultContent.blog
 
   const fetchBlogs = useCallback(async (pageNum: number) => {
     setLoading(true)
@@ -59,7 +62,7 @@ export function Blog({ initialBlogs = [], initialTotal = 0 }: BlogProps) {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block"
           >
-            Blogs
+            {section.eyebrow}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -67,10 +70,10 @@ export function Blog({ initialBlogs = [], initialTotal = 0 }: BlogProps) {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold text-blue-950 mb-4"
           >
-            Insights & Resources
+            {section.title}
           </motion.h2>
           <p className="max-w-2xl mx-auto text-gray-500 font-medium">
-             Stay updated with the latest trends and guides in international education.
+             {section.description}
           </p>
         </div>
 

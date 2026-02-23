@@ -7,9 +7,9 @@ import { ToastProvider, ToastViewport } from "@/components/ui/toast";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Unity Group",
-  description: "Unity Group",
-  generator: "Unity Group",
+  title: "Optimus",
+  description: "Optimus",
+  generator: "Optimus",
 };
 
 export default function RootLayout({

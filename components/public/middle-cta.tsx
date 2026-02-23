@@ -1,11 +1,16 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-export function MiddleCTA() {
+type MiddleCtaContent = HomePageContent["middleCta"]
+
+export function MiddleCTA({ content }: { content?: MiddleCtaContent }) {
+  const section = content ?? homeDefaultContent.middleCta
+
   return (
     <section className="py-20 bg-white">
       <div className="container text-center">
@@ -15,12 +20,14 @@ export function MiddleCTA() {
           transition={{ duration: 0.6 }}
           className="mb-12"
         >
-          <span className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block">Optimus</span>
+          <span className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block">
+            {section.eyebrow}
+          </span>
           <h2 className="text-4xl md:text-5xl font-bold text-blue-950 mb-6">
-            We are an Educational Consultancy
+            {section.title}
           </h2>
           <p className="max-w-3xl mx-auto text-gray-500 font-medium">
-             Our team of experts is dedicated to providing you with the best guidance and support for your international education journey.
+            {section.description}
           </p>
         </motion.div>
 
@@ -31,7 +38,7 @@ export function MiddleCTA() {
           className="relative h-[300px] md:h-[500px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl"
         >
           <Image
-            src="/middle-cta.png"
+            src="/banner.jpeg"
             alt="City view"
             fill
             className="object-cover"
@@ -46,16 +53,16 @@ export function MiddleCTA() {
         >
           <Link href="/contact">
             <Button className="bg-red-600 hover:bg-red-700 text-white px-10 py-7 text-lg font-bold rounded-xl shadow-lg shadow-red-600/20">
-              Contact Us
+              {section.primaryCtaLabel}
             </Button>
           </Link>
           <Link href="/services">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-7 text-lg font-bold rounded-xl shadow-lg shadow-blue-600/20">
-              Services
+              {section.secondaryCtaLabel}
             </Button>
           </Link>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

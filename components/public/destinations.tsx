@@ -2,27 +2,16 @@
 
 import Image from "next/image"
 import { motion } from "framer-motion"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-const destinations = [
-  {
-    name: "USA",
-    image: "/destinations/usa.png",
-  },
-  {
-    name: "Australia",
-    image: "/destinations/australia.png",
-  },
-  {
-    name: "Germany",
-    image: "/destinations/germany.png",
-  },
-  {
-    name: "Canada",
-    image: "/destinations/canada.png",
-  },
-]
+type DestinationsContent = HomePageContent["destinations"]
 
-export function Destinations() {
+export function Destinations({ content }: { content?: DestinationsContent }) {
+  const destinations = content?.items ?? homeDefaultContent.destinations.items
+  const eyebrow = content?.eyebrow ?? homeDefaultContent.destinations.eyebrow
+  const title = content?.title ?? homeDefaultContent.destinations.title
+  const viewAllLabel = content?.viewAllLabel ?? homeDefaultContent.destinations.viewAllLabel
+
   return (
     <section className="py-20 bg-white">
       <div className="container">
@@ -32,7 +21,7 @@ export function Destinations() {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block"
           >
-            Study Abroad
+            {eyebrow}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -40,7 +29,7 @@ export function Destinations() {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold text-blue-950 mb-4"
           >
-            Choose the destination you want to study
+            {title}
           </motion.h2>
         </div>
 
@@ -69,7 +58,7 @@ export function Destinations() {
         </div>
         
         <div className="text-center mt-12">
-            <button className="text-blue-600 font-bold hover:underline">View All</button>
+            <button className="text-blue-600 font-bold hover:underline">{viewAllLabel}</button>
         </div>
       </div>
     </section>

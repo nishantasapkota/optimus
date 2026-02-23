@@ -3,39 +3,43 @@
 import { motion } from "framer-motion"
 import { Plane, FileText, MapPin, Bus, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-const services = [
+type FeaturesContent = HomePageContent["features"]
+
+const featureStyles = [
   {
-    title: "Visa Preparation",
-    description: "Expert guidance for your visa application process with high success rates.",
     icon: Plane,
     color: "bg-red-600 text-white",
     borderColor: "border-red-600",
   },
   {
-    title: "Test Interpretation",
-    description: "Understanding your test scores and how they affect your applications.",
     icon: FileText,
     color: "bg-white text-blue-950",
     borderColor: "border-gray-100",
   },
   {
-    title: "Pre-Departure and Post-Departure",
-    description: "Support before you leave and after you arrive at your destination.",
     icon: MapPin,
     color: "bg-white text-blue-950",
     borderColor: "border-gray-100",
   },
   {
-    title: "Logistics training",
-    description: "Practical training for managing your logistics in a new country.",
     icon: Bus,
     color: "bg-white text-blue-950",
     borderColor: "border-gray-100",
   },
 ]
 
-export function Features() {
+export function Features({ content }: { content?: FeaturesContent }) {
+  const section = content ?? homeDefaultContent.features
+  const services = section.items.map((item, index) => {
+    const style = featureStyles[index] ?? featureStyles[0]
+    return {
+      ...style,
+      ...item,
+    }
+  })
+
   return (
     <section className="py-20 bg-white">
       <div className="container">
@@ -45,7 +49,7 @@ export function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-4 block"
           >
-            Our Services
+            {section.eyebrow}
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -53,10 +57,10 @@ export function Features() {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold text-blue-950 mb-4"
           >
-            Services we provide
+            {section.title}
           </motion.h2>
           <p className="max-w-2xl mx-auto text-gray-500 font-medium">
-             Comprehensive support for every aspect of your international education journey.
+             {section.description}
           </p>
         </div>
 

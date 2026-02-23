@@ -10,12 +10,22 @@ import { StatsBar } from "@/components/public/stats-bar"
 import { ConsultancySection } from "@/components/public/consultancy-section"
 import { MiddleCTA } from "@/components/public/middle-cta"
 import { CtaJourney } from "@/components/public/cta-journey"
-import { getBlogs, getServices, getEvent, getServicesCount, getBlogsCount } from "@/lib/db-utils"
+import { getBlogs, getServices, getEvent, getServicesCount, getBlogsCount, getPageContent } from "@/lib/db-utils"
+import { mergeHomeContent } from "@/lib/page-content"
 
 // Force dynamic rendering to ensure we get fresh data
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
+  let homeContent = mergeHomeContent()
+
+  try {
+    const pageContent = await getPageContent("home")
+    homeContent = mergeHomeContent(pageContent?.content)
+  } catch (error) {
+    console.error("Failed to fetch home page content:", error)
+  }
+
   // Fetch data in parallel with error handling
   let blogs: any[] = []
   let servicesSnapshot: any[] = []
@@ -78,17 +88,17 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-0 bg-white">
-      <Hero />
-      <StatsBar />
-      <Destinations />
-      <ConsultancySection />
-      <MiddleCTA />
-      <Partners />
-      <Features />
-      <Blog initialBlogs={blogs} initialTotal={totalBlogs} />
-      <Contact />
-      <CtaJourney />
-      <Testimonials />
+      <Hero content={homeContent.hero} />
+      <StatsBar content={homeContent.statsBar} />
+      <Destinations content={homeContent.destinations} />
+      <ConsultancySection content={homeContent.consultancy} />
+      <MiddleCTA content={homeContent.middleCta} />
+      <Partners content={homeContent.partners} />
+      <Features content={homeContent.features} />
+      <Blog initialBlogs={blogs} initialTotal={totalBlogs} content={homeContent.blog} />
+      <Contact content={homeContent.contact} />
+      <CtaJourney content={homeContent.ctaJourney} />
+      <Testimonials content={homeContent.testimonials} />
       <HomePopup initialEvent={event} />
     </div>
   )

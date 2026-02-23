@@ -89,6 +89,11 @@ const navigation = [
     icon: Calendar,
   },
   {
+    name: "Pages",
+    href: "/admin/pages",
+    icon: FileText,
+  },
+  {
     name: "Settings",
     href: "/admin/settings",
     icon: Settings,

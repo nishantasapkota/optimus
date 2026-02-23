@@ -2,6 +2,16 @@ import { MongoClient, type Db } from "mongodb"
 
 const fallbackUri = "mongodb://localhost:27017/optimus-new"
 const uri = process.env.MONGODB_URI || fallbackUri
+
+function getDatabaseName() {
+  if (process.env.MONGODB_DB) return process.env.MONGODB_DB
+  const source = process.env.MONGODB_URI || fallbackUri
+  const match = source.match(/\/([^/?]+)(\?|$)/)
+  if (match?.[1]) {
+    return decodeURIComponent(match[1])
+  }
+  return "optimus-new"
+}
 const options = {}
 
 let client: MongoClient
@@ -40,5 +50,5 @@ export default function getMongoClient(): Promise<MongoClient> {
 
 export async function getDatabase(): Promise<Db> {
   const client = await getClientPromise()
-  return client.db("optimus-new")
+  return client.db(getDatabaseName())
 }

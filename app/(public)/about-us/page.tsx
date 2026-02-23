@@ -6,10 +6,12 @@ import { motion } from "framer-motion"
 import { Play, Target, Gem, Eye } from "lucide-react"
 import { PageHero } from "@/components/public/page-hero"
 import { CtaJourney } from "@/components/public/cta-journey"
+import { aboutDefaultContent, mergeAboutContent } from "@/lib/page-content"
 
 export default function AboutUsPage() {
   const [bodMembers, setBodMembers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [content, setContent] = useState(aboutDefaultContent)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -23,11 +25,23 @@ export default function AboutUsPage() {
     }
   }, [])
 
+  useEffect(() => {
+    fetch("/api/pages/about")
+      .then(res => res.json())
+      .then(data => {
+        if (data?.content) {
+          setContent(mergeAboutContent(data.content))
+        }
+      })
+      .catch(err => console.error("Error fetching about page content:", err))
+  }, [mergeAboutContent])
+
   return (
     <div className="flex flex-col gap-0 bg-white min-h-screen text-slate-900">
       <PageHero 
-        title="About Us"
-        description="Empowering students to achieve their global academic dreams through expert guidance and support."
+        badge={content.hero.badge}
+        title={content.hero.title}
+        description={content.hero.description}
         breadcrumbItems={[{ label: "About Us" }]}
       />
 
@@ -45,24 +59,23 @@ export default function AboutUsPage() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <p className="text-xs uppercase tracking-[0.4em] text-red-600 font-semibold">Who we are</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-red-600 font-semibold">{content.whoWeAre.eyebrow}</p>
               <h2 className="mt-6 text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05]">
-                <span className="text-slate-900">Building Connections,</span> <br />
-                <span className="text-red-600">Creating Impact</span>
+                <span className="text-slate-900">{content.whoWeAre.titlePrimary}</span> <br />
+                <span className="text-red-600">{content.whoWeAre.titleAccent}</span>
               </h2>
               <p className="mt-6 text-lg text-slate-600 font-medium leading-relaxed max-w-xl">
-                Optimus Global Now offers accommodation services. 100% FREE Education Counselling and Application Processing. We bridge the gap between your aspirations and world-class educational opportunities.
+                {content.whoWeAre.description}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-slate-700 shadow-sm">
-                  100% Free Counselling
-                </span>
-                <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-slate-700 shadow-sm">
-                  Accommodation Support
-                </span>
-                <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-slate-700 shadow-sm">
-                  Application Processing
-                </span>
+                {content.whoWeAre.tags.map((tag, index) => (
+                  <span
+                    key={`${tag}-${index}`}
+                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-slate-700 shadow-sm"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </motion.div>
 
@@ -86,9 +99,9 @@ export default function AboutUsPage() {
                 </div>
               </div>
               <div className="absolute -bottom-6 left-6 right-6 rounded-2xl border border-white/70 bg-white/90 p-4 shadow-xl backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.32em] text-slate-500">Our Promise</p>
+                <p className="text-xs uppercase tracking-[0.32em] text-slate-500">{content.whoWeAre.promiseTitle}</p>
                 <p className="mt-2 text-sm font-medium text-slate-700">
-                  We bridge the gap between your aspirations and world-class educational opportunities.
+                  {content.whoWeAre.promiseText}
                 </p>
               </div>
             </motion.div>
@@ -104,14 +117,14 @@ export default function AboutUsPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <p className="text-xs uppercase tracking-[0.4em] text-slate-500 font-semibold">Our Story</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-slate-500 font-semibold">{content.story.eyebrow}</p>
               <h2 className="mt-5 text-4xl md:text-5xl font-bold text-slate-900">
-                About us
+                {content.story.title}
               </h2>
               <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Our Focus</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{content.story.focusLabel}</p>
                 <p className="mt-4 text-lg font-semibold text-slate-900 leading-relaxed">
-                  Guidance that keeps pace with a fast moving world.
+                  {content.story.focusText}
                 </p>
               </div>
             </motion.div>
@@ -121,12 +134,9 @@ export default function AboutUsPage() {
               transition={{ delay: 0.2 }}
               className="space-y-8 text-slate-600 text-lg font-medium leading-relaxed"
             >
-              <p>
-                In today&apos;s fast moving world it is not at all possible or prudent to do all personal investments on your own. Only today&apos;s fast moving world it is not at all possible or prudent to do all personal investments on your own. One can&apos;t keep pace with the quick moving markets and data stream on an everyday promise can I keep pace with the quick moving markets and data stream on an everyday promise.
-              </p>
-              <p>
-                In today&apos;s fast moving world it is not at all possible or prudent to do all personal investments on your own. One can&apos;t keep pace with the quick moving markets and data stream on an everyday promise.
-              </p>
+              {content.story.paragraphs.map((paragraph, index) => (
+                <p key={`${index}-${paragraph.slice(0, 10)}`}>{paragraph}</p>
+              ))}
             </motion.div>
           </div>
         </div>
@@ -145,9 +155,9 @@ export default function AboutUsPage() {
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/35 to-transparent" />
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-lg px-10">
-                <p className="text-xs uppercase tracking-[0.4em] text-white/60">Inside Optimus</p>
+                <p className="text-xs uppercase tracking-[0.4em] text-white/60">{content.video.eyebrow}</p>
                 <h3 className="mt-4 text-3xl md:text-4xl font-semibold text-white">
-                  A closer look at how we guide students.
+                  {content.video.title}
                 </h3>
               </div>
             </div>
@@ -169,23 +179,9 @@ export default function AboutUsPage() {
       <section className="py-24 bg-white">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Mission",
-                icon: Target,
-                desc: "Our mission is to empower students through personalized guidance and seamless application processing."
-              },
-              {
-                title: "Values",
-                icon: Gem,
-                desc: "We prioritize integrity, excellence, and student-centric support in every step of our journey."
-              },
-              {
-                title: "Vision",
-                icon: Eye,
-                desc: "To be the most trusted portal for global education, creating a worldwide network of successful scholars."
-              }
-            ].map((item, idx) => (
+            {content.mission.items.map((item, idx) => {
+              const Icon = [Target, Gem, Eye][idx] ?? Target
+              return (
               <motion.div
                 key={item.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -196,15 +192,16 @@ export default function AboutUsPage() {
                 <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top,rgba(248,113,113,0.12),transparent_55%)]" />
                 <div className="relative z-10 flex flex-col gap-6">
                   <div className="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-900/40 group-hover:bg-red-600 transition-colors">
-                    <item.icon className="w-8 h-8" />
+                    <Icon className="w-8 h-8" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-4">{item.title}</h3>
-                    <p className="text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                    <p className="text-slate-500 font-medium leading-relaxed">{item.description}</p>
                   </div>
                 </div>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -214,11 +211,11 @@ export default function AboutUsPage() {
         <div className="container">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between mb-16">
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-red-600 font-semibold">Leadership</p>
-              <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900">Our Team</h2>
+              <p className="text-xs uppercase tracking-[0.4em] text-red-600 font-semibold">{content.team.eyebrow}</p>
+              <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900">{content.team.title}</h2>
             </div>
             <p className="max-w-xl text-lg text-slate-600 font-medium">
-              Dedicated to guiding students at every step of their global education journey.
+              {content.team.description}
             </p>
           </div>
 

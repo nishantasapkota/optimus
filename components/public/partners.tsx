@@ -3,10 +3,14 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
-export function Partners() {
+type PartnersContent = HomePageContent["partners"]
+
+export function Partners({ content }: { content?: PartnersContent }) {
   const [partners, setPartners] = useState<any[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const section = content ?? homeDefaultContent.partners
 
   useEffect(() => {
     fetch("/api/partners")
@@ -27,30 +31,28 @@ export function Partners() {
   if (partners.length === 0) return null
 
   return (
-    <section className="py-24 bg-transparent overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-      
+    <section className="py-24 bg-gray-50/50 overflow-hidden relative">
+      {/* Decorative Elements */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-30 -translate-x-1/2" />
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-72 h-72 bg-red-100 rounded-full blur-3xl opacity-30 translate-x-1/2" />
+
       <div className="container relative z-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-20">
-          <motion.div
-             initial={{ opacity: 0, x: -20 }}
-             whileInView={{ opacity: 1, x: 0 }}
-             transition={{ duration: 0.6 }}
-             className="max-w-xl"
+        <div className="text-center mb-20 max-w-3xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-6xl font-bold text-blue-900 mb-6 tracking-tight"
           >
-            <span className="text-red-600 font-bold uppercase tracking-widest text-sm mb-4 block">Institutional Network</span>
-            <h2 className="text-4xl md:text-5xl  font-bold text-blue-900 tracking-tight leading-tight">
-              Our Leading <br/><span className="text-red-600">Partner</span> Universities
-            </h2>
-          </motion.div>
-          
-          <motion.p 
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gray-500 text-lg max-w-sm md:text-right font-medium"
+            {section.titlePrefix} <span className="text-red-600">{section.titleHighlight}</span> {section.titleSuffix}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-gray-600 text-lg leading-relaxed font-medium"
           >
-            Unity Group is proud to be officially representative of prestigious institutions worldwide.
+            {section.description}
           </motion.p>
         </div>
       </div>
@@ -74,7 +76,7 @@ export function Partners() {
                 key={index} 
                 className="flex-shrink-0 relative group w-48 h-28"
               >
-                <div className="flex items-center justify-center p-6 bg-white/50 backdrop-blur-sm rounded-3xl border border-gray-100 h-full hover:bg-white hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100">
+                <div className="flex items-center justify-center p-6 bg-white/50 backdrop-blur-sm rounded-3xl border border-gray-100 h-full hover:bg-white hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 opacity-90 group-hover:opacity-100">
                   <Image 
                     src={partner.logo} 
                     alt={partner.name} 
@@ -88,8 +90,6 @@ export function Partners() {
           </motion.div>
         </div>
       </div>
-      
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
     </section>
   )
 }
