@@ -6,7 +6,7 @@ import Image from "next/image"
 export async function Footer() {
   const details = await getBusinessDetails()
 
-  const businessName = details?.name || "Unity Group"
+  const businessName = details?.name || "Optimus Global"
   const firstName = businessName.split(" ")[0]
 
   const exploreLinks = [
@@ -59,7 +59,7 @@ export async function Footer() {
               )}
             </Link>
             <p className="text-white/70 text-sm md:text-base leading-relaxed font-medium max-w-sm">
-              Unity Group is the global architecture for educational success, bridging the gap between local potential and international excellence.
+              Optimus Global is the global architecture for educational success, bridging the gap between local potential and international excellence.
             </p>
             <div className="flex flex-wrap gap-3">
               {[
