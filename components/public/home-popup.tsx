@@ -3,13 +3,20 @@
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, Sparkles, X, ArrowRight, Clock, Bell } from "lucide-react"
+import { Calendar, MapPin, Sparkles, X, ArrowRight, Bell, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 interface HomePopupProps {
-  initialEvent?: any
+  initialEvent?: {
+    title?: string
+    description?: string
+    date?: string
+    location?: string
+    image?: string
+    slug?: string
+  } | null
 }
 
 export function HomePopup({ initialEvent }: HomePopupProps) {
@@ -18,7 +25,7 @@ export function HomePopup({ initialEvent }: HomePopupProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true)
-    }, 2000) // Show after 2 seconds
+    }, 2000)
     return () => clearTimeout(timer)
   }, [])
 
@@ -26,137 +33,142 @@ export function HomePopup({ initialEvent }: HomePopupProps) {
     setIsOpen(false)
   }
 
-  // Fallback content if no event is provided
   const displayEvent = initialEvent || {
     title: "Global Education Expo 2025",
     description: "Meet top UK university representatives and explore scholarship opportunities for the upcoming intake.",
     date: "Coming Soon",
-    location: "Unity Group Head Office",
+    location: "Optimus Global Head Office",
     image: "/professional-team-meeting.png",
     slug: "global-expo-2025"
   }
 
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-4xl p-0 overflow-hidden border-none rounded-[3rem] bg-white shadow-2xl overflow-y-auto max-h-[90vh]">
-        <div className="flex flex-col md:flex-row w-full relative">
-          
-          {/* Close Button - Custom Positioned */}
-          <button 
-            onClick={handleClose}
-            className="absolute right-6 top-6 z-50 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-gray-100 text-gray-900 hover:bg-red-600 hover:text-white transition-all shadow-sm group"
-          >
-            <X className="w-5 h-5 transition-transform group-hover:rotate-90" />
-          </button>
+  const description = displayEvent.description || "Connect with our counseling team and discover the right university pathway for your profile."
+  const shortDescription =
+    description.length > 190 ? `${description.slice(0, 187)}...` : description
 
-          {/* Left Side: Visual/Image */}
-          <div className="md:w-5/12 relative min-h-[300px] md:min-h-auto overflow-hidden">
-            <Image 
-              src={displayEvent.image || "/professional-team-meeting.png"} 
-              alt={displayEvent.title} 
-              fill 
-              className="object-cover"
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent
+        showCloseButton={false}
+        className="sm:max-w-5xl p-0 overflow-hidden border border-slate-200 rounded-[2rem] bg-white shadow-2xl overflow-y-auto max-h-[92vh]"
+      >
+        <div className="grid md:grid-cols-[1.1fr_0.9fr]">
+          <div className="relative min-h-[320px] md:min-h-[540px] overflow-hidden">
+            <Image
+              src={displayEvent.image || "/professional-team-meeting.png"}
+              alt={displayEvent.title || "Upcoming event"}
+              fill
+              className="object-cover scale-105"
               priority
             />
-            {/* Glossy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-950/80 via-blue-950/40 to-transparent" />
-            
-            <div className="absolute bottom-8 left-8 right-8 z-20">
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-                className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-xl text-[10px]  font-bold uppercase tracking-widest mb-4 shadow-lg shadow-red-600/30"
-              >
-                <Sparkles className="w-3 h-3" /> Featured Event
-              </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-950/95 via-blue-900/75 to-red-700/55" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.35),transparent_40%)]" />
+
+            <div className="absolute left-6 top-6 z-20">
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="text-white space-y-2"
+                transition={{ duration: 0.4 }}
+                className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md"
               >
-                <p className="text-xs  font-bold uppercase tracking-widest text-white/60">Coming Next</p>
-                <h4 className="text-2xl  font-bold leading-tight tracking-tighter">Don't Miss Out <br /> On Your Future.</h4>
+                <Sparkles className="h-3.5 w-3.5" />
+                Featured Announcement
               </motion.div>
             </div>
-          </div>
 
-          {/* Right Side: Content */}
-          <div className="md:w-7/12 p-8 md:p-14 flex flex-col justify-center bg-white relative">
-            {/* Red Accent Dot Pattern (Decorative) */}
-            <div className="absolute top-0 right-0 p-8 opacity-5">
-              <div className="grid grid-cols-4 gap-2">
-                {[...Array(16)].map((_, i) => (
-                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                ))}
-              </div>
-            </div>
-
-            <div className="relative z-10 space-y-8">
-              <div className="space-y-4">
-                <span className="text-red-600  font-bold uppercase tracking-[0.2em] text-[10px] block">Exclusive Invitation</span>
-                <h2 className="text-3xl md:text-5xl  font-bold text-blue-950 tracking-tighter leading-[1.1]">
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.45 }}
+              className="absolute bottom-6 left-6 right-6 z-20 space-y-5"
+            >
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">Upcoming Event</p>
+                <h2 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
                   {displayEvent.title}
                 </h2>
-                <p className="text-gray-500 font-medium leading-relaxed max-w-md">
-                  {displayEvent.description?.substring(0, 150)}...
+                <p className="text-sm text-white/85 leading-relaxed">{shortDescription}</p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/25 bg-white/15 px-4 py-3 backdrop-blur-md">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/70">Date</p>
+                  <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-white">
+                    <Calendar className="h-4 w-4" />
+                    {displayEvent.date || "Coming soon"}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/25 bg-white/15 px-4 py-3 backdrop-blur-md">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/70">Location</p>
+                  <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-white">
+                    <MapPin className="h-4 w-4" />
+                    {displayEvent.location || "Optimus Global Head Office"}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="relative px-6 py-8 sm:px-8 md:px-10 md:py-10 bg-[radial-gradient(circle_at_top_left,#f8fafc,transparent_55%)]">
+            <button
+              onClick={handleClose}
+              className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+              aria-label="Close popup"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="space-y-8"
+            >
+              <div className="space-y-4 pt-7 md:pt-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
+                  <Bell className="h-3.5 w-3.5" />
+                  First Visit Highlight
+                </div>
+                <h3 className="text-2xl font-semibold text-slate-900 leading-tight">
+                  Plan your next move with our admissions experts.
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-600">
+                  Reserve your seat now to meet advisors, review scholarship pathways, and get direct answers for your intake timeline.
                 </p>
               </div>
 
-              {/* Event Quick Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100 transition-colors hover:border-blue-100">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px]  font-bold text-gray-400 uppercase tracking-widest">Date</p>
-                    <p className="text-sm font-bold text-blue-950">{displayEvent.date}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100 transition-colors hover:border-red-100">
-                  <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px]  font-bold text-gray-400 uppercase tracking-widest">Location</p>
-                    <p className="text-sm font-bold text-blue-950 truncate max-w-[120px]">{displayEvent.location}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                <Link href="/event" className="flex-1">
-                  <Button className="w-full bg-blue-950 hover:bg-red-600 text-white  font-bold uppercase tracking-widest text-xs h-16 rounded-2xl shadow-xl shadow-blue-900/10 transition-all group">
-                    View Full Details <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-                <Button 
-                   onClick={handleClose}
-                   variant="outline" 
-                   className="sm:w-auto px-8 h-16 rounded-2xl border-2 border-gray-100 text-gray-400 font-bold hover:bg-gray-50 transition-all uppercase tracking-widest text-[10px]"
-                >
-                  Maybe Later
-                </Button>
-              </div>
-
-              {/* Urgency Badge */}
-              <div className="flex items-center gap-3 pt-4">
-                <div className="flex -space-x-2">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative bg-gray-100">
-                      <Image src={`https://i.pravatar.cc/100?img=${i+40}`} alt="User" fill className="object-cover" />
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Why attend</p>
+                <div className="mt-3 space-y-2.5">
+                  {[
+                    "University shortlisting based on your profile",
+                    "Latest visa and scholarship guidance",
+                    "One-on-one discussion with our team",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
+                      <CheckCircle2 className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>
-                <p className="text-xs font-medium text-gray-400">
-                  <span className="text-blue-950  font-bold">42+ students</span> already registered
-                </p>
               </div>
-            </div>
+
+              <div className="flex flex-col gap-3">
+                <Link href="/event" className="w-full">
+                  <Button className="h-12 w-full rounded-xl bg-slate-900 text-white hover:bg-red-600 transition group">
+                    View Event Details
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+                <Button
+                  onClick={handleClose}
+                  variant="outline"
+                  className="h-12 w-full rounded-xl border-slate-300 text-slate-700 hover:bg-slate-100"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </motion.div>
           </div>
         </div>
       </DialogContent>

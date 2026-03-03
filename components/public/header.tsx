@@ -3,7 +3,7 @@ import { Navbar } from "./navbar"
 
 export async function Header() {
   const details = await getBusinessDetails()
-  const businessName = details?.name || "Unity Group"
+  const businessName = details?.name || "Optimus Global"
   const firstName = businessName.split(" ")[0]
 
   return (

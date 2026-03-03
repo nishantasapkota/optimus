@@ -156,7 +156,7 @@ export default function AdminEventPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Location</label>
                   <Input 
-                    placeholder="e.g. Unity Group HQ" 
+                    placeholder="e.g. Optimus Global HQ" 
                     value={eventData.location}
                     onChange={(e) => setEventData({...eventData, location: e.target.value})}
                   />

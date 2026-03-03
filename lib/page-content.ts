@@ -254,14 +254,14 @@ export const homeDefaultContent: HomePageContent = {
     titlePrefix: "Our Leading",
     titleHighlight: "Partner",
     titleSuffix: "Universities",
-    description: "Unity Group is proud to be officially representative of prestigious institutions worldwide.",
+    description: "Optimus Global is proud to be officially representative of prestigious institutions worldwide.",
   },
   testimonials: {
     eyebrow: "Success Stories",
     titlePrefix: "Voice of Our",
     titleHighlight: "Scholars",
     description:
-      "Real experiences from students who transformed their global education dreams into reality with Unity Group.",
+      "Real experiences from students who transformed their global education dreams into reality with Optimus Global.",
   },
   contact: {
     eyebrow: "Contact",

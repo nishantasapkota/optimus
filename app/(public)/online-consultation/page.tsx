@@ -57,7 +57,7 @@ export default function OnlineConsultationPage() {
                     <ShieldCheck className="w-5 h-5 text-red-600" />
                     Verified Expertise
                   </h4>
-                  <p className="text-blue-900/60 text-sm font-medium">Unity Group consultations are conducted by certified professionals with a minimum of 8 years in international academic affairs.</p>
+                  <p className="text-blue-900/60 text-sm font-medium">Optimus Global consultations are conducted by certified professionals with a minimum of 8 years in international academic affairs.</p>
                 </div>
               </div>
             </motion.div>

@@ -18,7 +18,7 @@ export default function TermsAndConditionsPage() {
           <div className="space-y-4">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900">1. Acceptance of Terms</h2>
             <p className="text-slate-600 leading-relaxed">
-              By accessing or using Unity Group services, you agree to these Terms & Conditions. If you do not agree, please discontinue use of our website and services.
+              By accessing or using Optimus Global services, you agree to these Terms & Conditions. If you do not agree, please discontinue use of our website and services.
             </p>
           </div>
 
