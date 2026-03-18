@@ -2,6 +2,11 @@ import { getDatabase } from "./mongodb"
 import { ObjectId } from "mongodb"
 import * as bcrypt from "bcryptjs"
 
+function stripImmutableFields<T extends { _id?: any; createdAt?: any; updatedAt?: any }>(data: T) {
+  const { _id, createdAt, updatedAt, ...safe } = data
+  return safe as Omit<T, "_id" | "createdAt" | "updatedAt">
+}
+
 export interface User {
   _id?: ObjectId
   name: string
@@ -66,7 +71,7 @@ export async function createUser(userData: Omit<User, "_id" | "createdAt" | "upd
 
 export async function updateUser(id: string, userData: Partial<User>) {
   const db = await getDatabase()
-  const updatePayload: any = { ...userData }
+  const updatePayload: any = stripImmutableFields({ ...userData })
   if (updatePayload.password) {
     // hash password before updating
     updatePayload.password = await bcrypt.hash(updatePayload.password, 10)
@@ -218,9 +223,10 @@ export async function createBlog(blogData: Omit<Blog, "_id" | "createdAt" | "upd
 
 export async function updateBlog(id: string, blogData: Partial<Blog>) {
   const db = await getDatabase()
+  const safeBlogData = stripImmutableFields({ ...blogData } as any)
   const result = await db
     .collection<Blog>("blogs")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...blogData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeBlogData, updatedAt: new Date() } })
   return result
 }
 
@@ -292,9 +298,10 @@ export async function createCourse(courseData: Omit<Course, "_id" | "createdAt" 
 
 export async function updateCourse(id: string, courseData: Partial<Course>) {
   const db = await getDatabase()
+  const safeCourseData = stripImmutableFields({ ...courseData } as any)
   const result = await db
     .collection<Course>("courses")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...courseData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeCourseData, updatedAt: new Date() } })
   return result
 }
 
@@ -366,9 +373,10 @@ export async function createService(serviceData: Omit<Service, "_id" | "createdA
 
 export async function updateService(id: string, serviceData: Partial<Service>) {
   const db = await getDatabase()
+  const safeServiceData = stripImmutableFields({ ...serviceData } as any)
   const result = await db
     .collection<Service>("services")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...serviceData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeServiceData, updatedAt: new Date() } })
   return result
 }
 
@@ -426,9 +434,10 @@ export async function createAppointment(appointmentData: Omit<Appointment, "_id"
 
 export async function updateAppointment(id: string, appointmentData: Partial<Appointment>) {
   const db = await getDatabase()
+  const safeAppointmentData = stripImmutableFields({ ...appointmentData } as any)
   const result = await db
     .collection<Appointment>("appointments")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...appointmentData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeAppointmentData, updatedAt: new Date() } })
   return result
 }
 
@@ -477,9 +486,10 @@ export async function createMedia(mediaData: Omit<Media, "_id" | "createdAt" | "
 
 export async function updateMedia(id: string, mediaData: Partial<Media>) {
   const db = await getDatabase()
+  const safeMediaData = stripImmutableFields({ ...mediaData } as any)
   const result = await db
     .collection<Media>("media")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...mediaData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeMediaData, updatedAt: new Date() } })
   return result
 }
 
@@ -544,9 +554,10 @@ export async function createStudentCounseling(counselingData: Omit<StudentCounse
 
 export async function updateStudentCounseling(id: string, counselingData: Partial<StudentCounseling>) {
   const db = await getDatabase()
+  const safeCounselingData = stripImmutableFields({ ...counselingData } as any)
   const result = await db
     .collection<StudentCounseling>("student_counseling")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...counselingData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeCounselingData, updatedAt: new Date() } })
   return result
 }
 
@@ -620,9 +631,10 @@ export async function createOnlineApplication(applicationData: Omit<OnlineApplic
 
 export async function updateOnlineApplication(id: string, applicationData: Partial<OnlineApplication>) {
   const db = await getDatabase()
+  const safeApplicationData = stripImmutableFields({ ...applicationData } as any)
   const result = await db
     .collection<OnlineApplication>("online_applications")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...applicationData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeApplicationData, updatedAt: new Date() } })
   return result
 }
 
@@ -674,9 +686,10 @@ export async function createTestimonial(testimonialData: Omit<Testimonial, "_id"
 
 export async function updateTestimonial(id: string, testimonialData: Partial<Testimonial>) {
   const db = await getDatabase()
+  const safeTestimonialData = stripImmutableFields({ ...testimonialData } as any)
   const result = await db
     .collection<Testimonial>("testimonials")
-    .updateOne({ _id: new ObjectId(id) }, { $set: { ...testimonialData, updatedAt: new Date() } })
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeTestimonialData, updatedAt: new Date() } })
   return result
 }
 
@@ -789,6 +802,8 @@ export async function getBusinessDetails() {
 
 export async function updateBusinessDetails(detailsData: Omit<BusinessDetails, "_id" | "updatedAt">) {
   const db = await getDatabase()
+  // Ensure immutable fields are not written even if provided by the client.
+  const safeDetails = stripImmutableFields(detailsData as any)
   const existing = await db.collection<BusinessDetails>("business_details").findOne({})
 
   if (existing) {
@@ -796,7 +811,7 @@ export async function updateBusinessDetails(detailsData: Omit<BusinessDetails, "
       { _id: existing._id },
       {
         $set: {
-          ...detailsData,
+          ...safeDetails,
           updatedAt: new Date()
         }
       }
@@ -804,7 +819,7 @@ export async function updateBusinessDetails(detailsData: Omit<BusinessDetails, "
     return result
   } else {
     const result = await db.collection<BusinessDetails>("business_details").insertOne({
-      ...detailsData,
+      ...safeDetails,
       updatedAt: new Date(),
     } as BusinessDetails)
     return result
@@ -878,9 +893,10 @@ export async function createBODMember(member: Omit<BODMember, "_id" | "createdAt
 
 export async function updateBODMember(id: string, member: Partial<BODMember>) {
   const db = await getDatabase()
+  const safeMember = stripImmutableFields({ ...member } as any)
   return await db.collection<BODMember>("bod_members").updateOne(
     { _id: new ObjectId(id) },
-    { $set: { ...member, updatedAt: new Date() } }
+    { $set: { ...safeMember, updatedAt: new Date() } }
   )
 }
 
