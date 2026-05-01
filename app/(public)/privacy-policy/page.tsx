@@ -1,62 +1,36 @@
 import { PageHero } from "@/components/public/page-hero"
+import { getPageContent } from "@/lib/db-utils"
+import { mergePrivacyContent } from "@/lib/page-content"
 
-export default function PrivacyPolicyPage() {
+export const dynamic = "force-dynamic"
+
+export default async function PrivacyPolicyPage() {
+  let content = mergePrivacyContent()
+
+  try {
+    const pageContent = await getPageContent("privacy-policy")
+    content = mergePrivacyContent(pageContent?.content)
+  } catch (error) {
+    console.error("Failed to fetch privacy page content:", error)
+  }
+
   return (
     <div className="flex flex-col">
       <PageHero
-        title={<>Privacy <span className="text-rose-400">Policy</span></>}
-        description="How we collect, use, and protect your information across our services."
+        title={<>{content.hero.title} <span className="text-rose-400">{content.hero.highlight}</span></>}
+        description={content.hero.description}
         breadcrumbItems={[
           { label: "Home", href: "/" },
           { label: "Privacy Policy" },
         ]}
-        badge="Data Protection"
+        badge={content.hero.badge}
       />
 
       <section className="py-20 md:py-24 bg-white">
-        <div className="container max-w-4xl space-y-10">
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">1. Information We Collect</h2>
-            <p className="text-slate-600 leading-relaxed">
-              We collect information you provide directly, such as contact details, academic history, and documents submitted through forms and applications.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">2. How We Use Information</h2>
-            <p className="text-slate-600 leading-relaxed">
-              Your information is used to deliver counseling services, submit applications to partner institutions, and communicate updates relevant to your journey.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">3. Sharing & Disclosure</h2>
-            <p className="text-slate-600 leading-relaxed">
-              We share data only with trusted partners and service providers as required to deliver services. We do not sell personal information.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">4. Data Security</h2>
-            <p className="text-slate-600 leading-relaxed">
-              We implement administrative and technical safeguards to protect your data. While no system is fully secure, we continuously improve our protections.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">5. Your Choices</h2>
-            <p className="text-slate-600 leading-relaxed">
-              You may request updates or deletion of your information subject to applicable laws and institutional requirements.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <h3 className="text-lg font-bold text-slate-900">Questions about privacy?</h3>
-            <p className="mt-2 text-slate-600">
-              Contact us via the Contact page and we will assist you with privacy-related requests.
-            </p>
-          </div>
-        </div>
+        <div
+          className="container max-w-4xl prose prose-lg max-w-none prose-headings:text-slate-900 prose-h2:text-2xl prose-h2:font-bold prose-h2:md:text-3xl prose-h3:rounded-2xl prose-h3:border prose-h3:border-slate-200 prose-h3:bg-slate-50 prose-h3:p-6 prose-h3:text-lg prose-p:text-slate-600 prose-p:leading-relaxed prose-a:text-red-600"
+          dangerouslySetInnerHTML={{ __html: content.body }}
+        />
       </section>
     </div>
   )

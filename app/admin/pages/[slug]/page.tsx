@@ -6,15 +6,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { RichTextEditor } from "@/components/rich-text-editor"
 import { toast } from "sonner"
 import { Loader2, Save } from "lucide-react"
 import {
   aboutDefaultContent,
   homeDefaultContent,
+  privacyDefaultContent,
+  termsDefaultContent,
   mergeAboutContent,
   mergeHomeContent,
+  mergePrivacyContent,
+  mergeTermsContent,
   type AboutPageContent,
   type HomePageContent,
+  type LegalPageContent,
 } from "@/lib/page-content"
 
 const pageConfig = {
@@ -28,11 +34,21 @@ const pageConfig = {
     defaultContent: aboutDefaultContent,
     merge: mergeAboutContent,
   },
+  "terms-and-conditions": {
+    label: "Terms & Conditions",
+    defaultContent: termsDefaultContent,
+    merge: mergeTermsContent,
+  },
+  "privacy-policy": {
+    label: "Privacy Policy",
+    defaultContent: privacyDefaultContent,
+    merge: mergePrivacyContent,
+  },
 } as const
 
 type PageSlug = keyof typeof pageConfig
 
-type PageContentState = HomePageContent | AboutPageContent
+type PageContentState = HomePageContent | AboutPageContent | LegalPageContent
 
 export default function PageContentEditor() {
   const params = useParams<{ slug: string }>()
@@ -125,6 +141,7 @@ export default function PageContentEditor() {
 
   const homeContent = content as HomePageContent
   const aboutContent = content as AboutPageContent
+  const legalContent = content as LegalPageContent
 
   return (
     <div className="space-y-8 p-8 max-w-5xl mx-auto">
@@ -892,6 +909,65 @@ export default function PageContentEditor() {
                     />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {(slug === "terms-and-conditions" || slug === "privacy-policy") && (
+          <div className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Hero</CardTitle>
+                <CardDescription>Page hero content shown above the legal copy.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Badge</label>
+                    <Input
+                      value={legalContent.hero.badge}
+                      onChange={(e) => updateField(["hero", "badge"], e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Title</label>
+                    <Input
+                      value={legalContent.hero.title}
+                      onChange={(e) => updateField(["hero", "title"], e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Highlighted Title Text</label>
+                  <Input
+                    value={legalContent.hero.highlight}
+                    onChange={(e) => updateField(["hero", "highlight"], e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea
+                    value={legalContent.hero.description}
+                    onChange={(e) => updateField(["hero", "description"], e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Page Body</CardTitle>
+                <CardDescription>Rich text content rendered on the public page.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <label className="text-sm font-medium">Content</label>
+                <RichTextEditor
+                  value={legalContent.body}
+                  onChange={(newContent) => updateField(["body"], newContent)}
+                  placeholder={`Write ${config.label.toLowerCase()} content here...`}
+                />
               </CardContent>
             </Card>
           </div>

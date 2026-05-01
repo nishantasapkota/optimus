@@ -126,6 +126,16 @@ export type AboutPageContent = {
   }
 }
 
+export type LegalPageContent = {
+  hero: {
+    badge: string
+    title: string
+    highlight: string
+    description: string
+  }
+  body: string
+}
+
 export const homeDefaultContent: HomePageContent = {
   hero: {
     badge: "2025",
@@ -279,6 +289,52 @@ export const homeDefaultContent: HomePageContent = {
   },
 }
 
+export const termsDefaultContent: LegalPageContent = {
+  hero: {
+    badge: "Legal Framework",
+    title: "Terms &",
+    highlight: "Conditions",
+    description: "Clear guidelines that outline how we work together and how to use our services.",
+  },
+  body: `
+    <h2>1. Acceptance of Terms</h2>
+    <p>By accessing or using Optimus Global services, you agree to these Terms &amp; Conditions. If you do not agree, please discontinue use of our website and services.</p>
+    <h2>2. Services</h2>
+    <p>We provide education counseling, admissions support, and related services. Service availability may vary by country, program, or partner institution.</p>
+    <h2>3. User Responsibilities</h2>
+    <p>You agree to provide accurate, complete information and keep documents current. Any misuse, fraudulent submissions, or misrepresentation may lead to service refusal.</p>
+    <h2>4. Third-Party Institutions</h2>
+    <p>Admissions decisions are made solely by partner institutions. We facilitate applications but cannot guarantee acceptance, timelines, or outcomes.</p>
+    <h2>5. Changes to Terms</h2>
+    <p>We may update these terms to reflect service or legal changes. Continued use of the website after changes indicates acceptance of the updated terms.</p>
+    <h3>Need clarity?</h3>
+    <p>If you have questions about these terms, please reach out through the Contact page and our team will assist you.</p>
+  `.trim(),
+}
+
+export const privacyDefaultContent: LegalPageContent = {
+  hero: {
+    badge: "Data Protection",
+    title: "Privacy",
+    highlight: "Policy",
+    description: "How we collect, use, and protect your information across our services.",
+  },
+  body: `
+    <h2>1. Information We Collect</h2>
+    <p>We collect information you provide directly, such as contact details, academic history, and documents submitted through forms and applications.</p>
+    <h2>2. How We Use Information</h2>
+    <p>Your information is used to deliver counseling services, submit applications to partner institutions, and communicate updates relevant to your journey.</p>
+    <h2>3. Sharing &amp; Disclosure</h2>
+    <p>We share data only with trusted partners and service providers as required to deliver services. We do not sell personal information.</p>
+    <h2>4. Data Security</h2>
+    <p>We implement administrative and technical safeguards to protect your data. While no system is fully secure, we continuously improve our protections.</p>
+    <h2>5. Your Choices</h2>
+    <p>You may request updates or deletion of your information subject to applicable laws and institutional requirements.</p>
+    <h3>Questions about privacy?</h3>
+    <p>Contact us via the Contact page and we will assist you with privacy-related requests.</p>
+  `.trim(),
+}
+
 export const aboutDefaultContent: AboutPageContent = {
   hero: {
     badge: "Institutional Grade Excellence",
@@ -369,4 +425,12 @@ export function mergeHomeContent(incoming?: Partial<HomePageContent>) {
 
 export function mergeAboutContent(incoming?: Partial<AboutPageContent>) {
   return mergeDeep(aboutDefaultContent, incoming)
+}
+
+export function mergeTermsContent(incoming?: Partial<LegalPageContent>) {
+  return mergeDeep(termsDefaultContent, incoming)
+}
+
+export function mergePrivacyContent(incoming?: Partial<LegalPageContent>) {
+  return mergeDeep(privacyDefaultContent, incoming)
 }

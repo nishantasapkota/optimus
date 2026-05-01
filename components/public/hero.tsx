@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
@@ -42,10 +43,12 @@ export function Hero({ content }: { content?: HeroContent }) {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-7 rounded-lg text-lg font-bold shadow-lg shadow-red-600/20 group transition-all duration-300">
-              {hero.ctaLabel}
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link href="/online-consultation">
+              <Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-7 rounded-lg text-lg font-bold shadow-lg shadow-red-600/20 group transition-all duration-300">
+                {hero.ctaLabel}
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </div>
         </motion.div>
 

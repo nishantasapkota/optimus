@@ -14,6 +14,16 @@ const pages = [
     title: "About",
     description: "Manage the About Us page story, mission, and leadership intro.",
   },
+  {
+    slug: "terms-and-conditions",
+    title: "Terms & Conditions",
+    description: "Manage legal terms content with a rich text editor.",
+  },
+  {
+    slug: "privacy-policy",
+    title: "Privacy Policy",
+    description: "Manage privacy policy content with a rich text editor.",
+  },
 ]
 
 export default function PagesAdminList() {

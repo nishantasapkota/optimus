@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { usePathname } from "next/navigation"
+import { Menu, X } from "lucide-react"
 
 interface NavbarProps {
   details: any
@@ -15,8 +16,19 @@ interface NavbarProps {
 
 export function Navbar({ details, businessName, firstName }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
   const isHomePage = pathname === "/"
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/about-us" },
+    { name: "Services", href: "/services" },
+    { name: "Courses", href: "/courses" },
+    { name: "Online Counselling", href: "/online-consultation" },
+    { name: "Success Stories", href: "/success-stories" },
+    { name: "Blogs", href: "/blogs" },
+    { name: "Contact Us", href: "/contact" },
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,6 +42,10 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [pathname])
 
   // Pages with light heroes (need dark text initially)
   const hasLightHero = pathname === "/"
@@ -71,16 +87,7 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
           "hidden lg:flex items-center gap-8 text-sm  font-bold capitalize  transition-colors duration-500",
           isDarkText ? "text-foreground" : "text-white"
         )}>
-          {[
-            { name: "Home", href: "/" },
-            { name: "About Us", href: "/about-us" },
-            { name: "Services", href: "/services" },
-            { name: "Courses", href: "/courses" },
-            { name: "Online Counselling", href: "/online-consultation" },
-            { name: "Success Stories", href: "/success-stories" },
-            { name: "Blogs", href: "/blogs" },
-            { name: "Contact Us", href: "/contact" },
-          ].map((item) => (
+          {navItems.map((item) => (
             <Link 
               key={item.name}
               href={item.href} 
@@ -93,7 +100,7 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
         </nav>
 
         <div className="flex items-center gap-4">
-           <Link href="/online-application">
+           <Link href="/online-application" className="hidden lg:block">
               <Button className={cn(
                 "rounded-full px-8 h-11 font-semibold uppercase tracking-widest text-[10px] transition-all duration-500",
                 isDarkText 
@@ -103,6 +110,56 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
                 Register
               </Button>
            </Link>
+           <button
+             type="button"
+             onClick={() => setIsMenuOpen((open) => !open)}
+             className={cn(
+               "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 lg:hidden",
+               isDarkText
+                 ? "border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-900/10 hover:border-primary hover:text-primary"
+                 : "border-white/25 bg-white/10 text-white backdrop-blur-md hover:bg-white/20"
+             )}
+             aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+             aria-expanded={isMenuOpen}
+             aria-controls="mobile-navigation"
+           >
+             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+           </button>
+        </div>
+      </div>
+
+      <div
+        id="mobile-navigation"
+        className={cn(
+          "container lg:hidden",
+          isMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
+      >
+        <div
+          className={cn(
+            "absolute left-4 right-4 top-[calc(100%+0.5rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15 transition-all duration-300",
+            isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
+          )}
+        >
+          <nav className="grid gap-1 p-3 text-sm font-bold text-slate-900">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "rounded-xl px-4 py-3 transition hover:bg-slate-50 hover:text-primary",
+                  pathname === item.href && "bg-blue-50 text-primary"
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+            <Link href="/online-application" className="mt-2">
+              <Button className="h-12 w-full rounded-xl bg-primary text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground hover:bg-secondary">
+                Register
+              </Button>
+            </Link>
+          </nav>
         </div>
       </div>
     </header>

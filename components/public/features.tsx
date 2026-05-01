@@ -10,23 +10,15 @@ type FeaturesContent = HomePageContent["features"]
 const featureStyles = [
   {
     icon: Plane,
-    color: "bg-red-600 text-white",
-    borderColor: "border-red-600",
   },
   {
     icon: FileText,
-    color: "bg-white text-blue-950",
-    borderColor: "border-gray-100",
   },
   {
     icon: MapPin,
-    color: "bg-white text-blue-950",
-    borderColor: "border-gray-100",
   },
   {
     icon: Bus,
-    color: "bg-white text-blue-950",
-    borderColor: "border-gray-100",
   },
 ]
 
@@ -72,18 +64,18 @@ export function Features({ content }: { content?: FeaturesContent }) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               whileHover={{ y: -5 }}
-              className={`p-8 rounded-3xl border ${service.borderColor} ${service.color === 'bg-red-600 text-white' ? service.color : 'bg-white text-blue-950 shadow-lg shadow-gray-100/50'} flex flex-col items-start transition-all duration-300`}
+              className="group flex flex-col items-start rounded-3xl border border-gray-100 bg-white p-8 text-blue-950 shadow-lg shadow-gray-100/50 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white"
             >
-              <div className={`p-4 rounded-2xl ${service.color === 'bg-red-600 text-white' ? 'bg-white/20' : 'bg-blue-50'} mb-6`}>
-                <service.icon className={`h-8 w-8 ${service.color === 'bg-red-600 text-white' ? 'text-white' : 'text-blue-600'}`} />
+              <div className="mb-6 rounded-2xl bg-blue-50 p-4 transition-colors duration-300 group-hover:bg-white/20">
+                <service.icon className="h-8 w-8 text-blue-600 transition-colors duration-300 group-hover:text-white" />
               </div>
               <h3 className="text-xl font-bold mb-4">{service.title}</h3>
-              <p className={`text-sm mb-8 ${service.color === 'bg-red-600 text-white' ? 'text-red-50' : 'text-gray-500'} font-medium leading-relaxed`}>
+              <p className="mb-8 text-sm font-medium leading-relaxed text-gray-500 transition-colors duration-300 group-hover:text-red-50">
                 {service.description}
               </p>
               <Link 
                 href="/services" 
-                className={`mt-auto inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest ${service.color === 'bg-red-600 text-white' ? 'text-white border-b border-white' : 'text-blue-600 hover:text-red-600'} transition-colors`}
+                className="mt-auto inline-flex items-center gap-2 border-b border-blue-600 text-sm font-bold uppercase tracking-widest text-blue-600 transition-colors duration-300 group-hover:border-white group-hover:text-white"
               >
                 Learn More
                 <ArrowRight className="h-4 w-4" />

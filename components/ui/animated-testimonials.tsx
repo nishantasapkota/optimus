@@ -20,6 +20,8 @@ export const AnimatedTestimonials = ({
   autoplay?: boolean;
 }) => {
   const [active, setActive] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxQuoteLength = 320;
 
   const handleNext = () => {
     setActive((prev) => (prev + 1) % testimonials.length);
@@ -34,6 +36,10 @@ export const AnimatedTestimonials = ({
   };
 
   useEffect(() => {
+    setIsExpanded(false);
+  }, [active]);
+
+  useEffect(() => {
     if (autoplay) {
       const interval = setInterval(handleNext, 5000);
       return () => clearInterval(interval);
@@ -43,6 +49,14 @@ export const AnimatedTestimonials = ({
   const randomRotateY = () => {
     return Math.floor(Math.random() * 21) - 10;
   };
+
+  const activeQuote = testimonials[active].quote.trim();
+  const isLongQuote = activeQuote.length > maxQuoteLength;
+  const visibleQuote =
+    !isExpanded && isLongQuote
+      ? `${activeQuote.slice(0, maxQuoteLength).trimEnd()}...`
+      : activeQuote;
+
   return (
     <div className="mx-auto max-w-5xl antialiased font-sans px-4 md:px-8 lg:px-12 py-20">
       <div className="relative grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
@@ -78,8 +92,8 @@ export const AnimatedTestimonials = ({
                 <p className="text-sm text-gray-500 dark:text-neutral-500">
                   {testimonials[active].designation}
                 </p>
-                <motion.p className="text-lg text-gray-600 mt-8 dark:text-neutral-300">
-                  {testimonials[active].quote.split(" ").map((word, index) => (
+                <motion.p className="mt-8 text-lg text-gray-600 dark:text-neutral-300">
+                  {visibleQuote.split(" ").map((word, index) => (
                     <motion.span
                       key={index}
                       initial={{
@@ -102,6 +116,15 @@ export const AnimatedTestimonials = ({
                       {word}&nbsp;
                     </motion.span>
                   ))}
+                  {isLongQuote && (
+                    <button
+                      type="button"
+                      onClick={() => setIsExpanded((prev) => !prev)}
+                      className="inline text-base font-semibold text-red-600 transition hover:text-red-700"
+                    >
+                      {isExpanded ? "show less" : "read more"}
+                    </button>
+                  )}
                 </motion.p>
               </motion.div>
               <div className="flex gap-4 pt-10">
