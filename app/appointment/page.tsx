@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { PageHero } from "@/components/public/page-hero"
 import { toast } from "sonner"
 import { Calendar, Clock, Mail, Phone, User } from "lucide-react"
 
@@ -74,122 +74,120 @@ export default function AppointmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-background to-blue-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2 text-balance">Book an Appointment</h1>
-          <p className="text-muted-foreground text-lg text-pretty">
-            Fill out the form below and we'll get back to you as soon as possible
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-background to-blue-50">
+      <PageHero
+        badge="Book A Session"
+        title={<>Book an <span className="text-rose-400">Appointment</span></>}
+        description="Share your preferred time and a few details about your needs. Our team will get back to you as soon as possible."
+        breadcrumbItems={[
+          { label: "Home", href: "/" },
+          { label: "Appointment" },
+        ]}
+      />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Appointment Details</CardTitle>
-            <CardDescription>Please provide your information and preferred appointment time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input id="name" name="name" placeholder="John Doe" required className="pl-10" />
+      <section className="px-4 py-12 md:py-16">
+        <div className="mx-auto max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle>Appointment Details</CardTitle>
+              <CardDescription>Please provide your information and preferred appointment time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input id="name" name="name" placeholder="John Doe" required className="pl-10" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="john@example.com"
+                        required
+                        className="pl-10"
+                      />
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="phone">Phone Number *</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="john@example.com"
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
                       required
                       className="pl-10"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="space-y-2">
+                  <Label htmlFor="service">Service *</Label>
                   <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
+                    id="service"
+                    name="service"
+                    placeholder="Enter the service you need"
                     required
-                    className="pl-10"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="service">Service *</Label>
-                <Select name="service" required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a service" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="consultation">Consultation</SelectItem>
-                    <SelectItem value="web-development">Web Development</SelectItem>
-                    <SelectItem value="design">Design Services</SelectItem>
-                    <SelectItem value="seo">SEO Optimization</SelectItem>
-                    <SelectItem value="maintenance">Website Maintenance</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="preferredDate">Preferred Date *</Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="preferredDate"
+                        name="preferredDate"
+                        type="date"
+                        required
+                        min={new Date().toISOString().split("T")[0]}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
 
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="preferredDate">Preferred Date *</Label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      id="preferredDate"
-                      name="preferredDate"
-                      type="date"
-                      required
-                      min={new Date().toISOString().split("T")[0]}
-                      className="pl-10"
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="preferredTime">Preferred Time *</Label>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input id="preferredTime" name="preferredTime" type="time" required className="pl-10" />
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="preferredTime">Preferred Time *</Label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input id="preferredTime" name="preferredTime" type="time" required className="pl-10" />
-                  </div>
+                  <Label htmlFor="message">Additional Message</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    placeholder="Tell us more about your needs..."
+                    rows={4}
+                    className="resize-none"
+                  />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Additional Message</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Tell us more about your needs..."
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
-
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Submitting..." : "Submit Appointment Request"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Submitting..." : "Submit Appointment Request"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   )
 }
