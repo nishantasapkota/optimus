@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Calendar, MapPin, Sparkles, X, ArrowRight, Bell, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
@@ -52,6 +52,9 @@ export function HomePopup({ initialEvent }: HomePopupProps) {
         showCloseButton={false}
         className="sm:max-w-5xl p-0 overflow-hidden border border-slate-200 rounded-[2rem] bg-white shadow-2xl overflow-y-auto max-h-[92vh]"
       >
+        <DialogTitle className="sr-only">
+          {displayEvent.title || "Featured announcement"}
+        </DialogTitle>
         <div className="grid md:grid-cols-[1.1fr_0.9fr]">
           <div className="relative min-h-[320px] md:min-h-[540px] overflow-hidden">
             <Image

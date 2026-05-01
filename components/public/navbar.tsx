@@ -77,7 +77,7 @@ export function Navbar({ details, businessName, firstName }: NavbarProps) {
             { name: "Services", href: "/services" },
             { name: "Courses", href: "/courses" },
             { name: "Online Counselling", href: "/online-consultation" },
-            { name: "Success Stories", href: "/#testimonials" },
+            { name: "Success Stories", href: "/success-stories" },
             { name: "Blogs", href: "/blogs" },
             { name: "Contact Us", href: "/contact" },
           ].map((item) => (

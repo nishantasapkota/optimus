@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { motion } from "framer-motion"
 import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
@@ -58,7 +59,9 @@ export function Destinations({ content }: { content?: DestinationsContent }) {
         </div>
         
         <div className="text-center mt-12">
-            <button className="text-blue-600 font-bold hover:underline">{viewAllLabel}</button>
+          <Link href="/destinations" className="text-blue-600 font-bold hover:underline">
+            {viewAllLabel}
+          </Link>
         </div>
       </div>
     </section>
