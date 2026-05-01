@@ -12,6 +12,7 @@ export async function GET() {
       users: users.map((user) => ({
         ...user,
         _id: user._id?.toString(),
+        password: undefined,
       })),
     })
   } catch (error) {
