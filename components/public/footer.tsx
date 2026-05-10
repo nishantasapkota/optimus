@@ -7,6 +7,7 @@ import { normalizeBusinessOffices } from "@/lib/business-contact"
 export async function Footer() {
   const details = await getBusinessDetails()
   const offices = normalizeBusinessOffices(details)
+  const phones = details?.phones?.filter(Boolean) ?? []
 
   const businessName = details?.name || "Optimus Global"
   const firstName = businessName.split(" ")[0]
@@ -145,14 +146,21 @@ export async function Footer() {
                   <span className="text-white/70 font-medium text-sm leading-relaxed">Kathmandu, Nepal</span>
                 </div>
               )}
-              {details?.phones?.map((phone, i) => (
-                <div key={i} className="flex items-center gap-4">
+              {phones.length > 0 && (
+                <div className="flex items-start gap-4">
                   <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <Phone className="h-5 w-5 text-red-400" />
                   </div>
-                  <span className="text-white/70 font-medium text-sm">{phone}</span>
+                  <span className="flex flex-wrap gap-x-3 gap-y-1 text-white/70 font-medium text-sm leading-relaxed">
+                    {phones.map((phone, index) => (
+                      <span key={phone}>
+                        {phone}
+                        {index < phones.length - 1 ? "," : ""}
+                      </span>
+                    ))}
+                  </span>
                 </div>
-              ))}
+              )}
               {details?.emails?.map((email, i) => (
                 <div key={i} className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
