@@ -784,6 +784,12 @@ export interface BusinessDetails {
   address: string
   emails: string[]
   phones: string[]
+  offices?: {
+    label: string
+    address: string
+    emails: string[]
+    phones: string[]
+  }[]
   socialLinks: {
     facebook?: string
     twitter?: string

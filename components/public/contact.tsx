@@ -1,14 +1,31 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { Send } from "lucide-react"
+import { Mail, MapPin, Phone, Send } from "lucide-react"
 import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
+import { normalizeBusinessOffices, type BusinessOffice, type BusinessContactDetails } from "@/lib/business-contact"
 
 type ContactContent = HomePageContent["contact"]
 
 export function Contact({ content }: { content?: ContactContent }) {
   const section = content ?? homeDefaultContent.contact
+  const [offices, setOffices] = useState<BusinessOffice[]>([])
+
+  useEffect(() => {
+    async function fetchBusinessDetails() {
+      try {
+        const res = await fetch("/api/business-details")
+        const data: { details?: BusinessContactDetails } = await res.json()
+        setOffices(normalizeBusinessOffices(data.details))
+      } catch (error) {
+        setOffices([])
+      }
+    }
+
+    fetchBusinessDetails()
+  }, [])
 
   return (
     <section className="py-20 bg-white">
@@ -34,7 +51,7 @@ export function Contact({ content }: { content?: ContactContent }) {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Form Side */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -62,50 +79,57 @@ export function Contact({ content }: { content?: ContactContent }) {
             </form>
           </motion.div>
 
-          {/* Map Side */}
+          {/* Office Cards */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative h-[500px] rounded-[2rem] overflow-hidden shadow-2xl bg-blue-50/30 p-8 flex items-center justify-center border border-gray-100"
+            className="grid gap-4"
           >
-             {/* Abstract World Map decoration */}
-             <div className="absolute inset-0 opacity-10 flex items-center justify-center">
-                 <svg viewBox="0 0 800 400" className="w-full h-full text-blue-900 fill-current">
-                    <path d="M150 150 Q 200 100 250 150 T 350 150" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="5,5" />
-                    <circle cx="150" cy="150" r="5" />
-                    <circle cx="250" cy="150" r="5" />
-                    <circle cx="450" cy="200" r="5" />
-                    <circle cx="650" cy="150" r="5" />
-                 </svg>
-             </div>
-             
-             {/* Pins and Flags (Simplified) */}
-             <div className="relative w-full h-full flex flex-wrap gap-12 items-center justify-center">
-                <div className="flex flex-col items-center gap-2">
-                   <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center font-bold text-xs">USA</div>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                   <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center font-bold text-xs">AUS</div>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                   <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center font-bold text-xs">GER</div>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                   <div className="w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 flex items-center justify-center font-bold text-xs">CAN</div>
-                </div>
-             </div>
+            {offices.length === 0 ? (
+              <div className="rounded-2xl border border-gray-100 bg-blue-50/40 p-8 shadow-sm">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">{section.mapStatLabel}</p>
+                <p className="mt-2 text-2xl font-black text-blue-950">{section.mapStatValue}</p>
+              </div>
+            ) : (
+              offices.map((office) => (
+                <div key={`${office.label}-${office.address}`} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 space-y-4">
+                      <div>
+                        <h3 className="text-lg font-black text-blue-950">{office.label}</h3>
+                        {office.address && <p className="mt-1 text-sm font-medium leading-relaxed text-gray-600">{office.address}</p>}
+                      </div>
 
-             {/* Bottom Overlay Info */}
-             <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl flex items-center gap-6">
-               <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                    <Send className="w-6 h-6" />
+                      {office.phones.length > 0 && (
+                        <div className="space-y-2">
+                          {office.phones.map((phone) => (
+                            <div key={phone} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                              <Phone className="h-4 w-4 text-red-500" />
+                              <span>{phone}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {office.emails.length > 0 && (
+                        <div className="space-y-2">
+                          {office.emails.map((email) => (
+                            <div key={email} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                              <Mail className="h-4 w-4 text-red-500" />
+                              <span className="break-all">{email}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                   <p className="text-xs text-gray-500 font-bold uppercase">{section.mapStatLabel}</p>
-                   <p className="text-lg font-black text-blue-900">{section.mapStatValue}</p>
-                </div>
-             </div>
+              ))
+            )}
           </motion.div>
         </div>
       </div>

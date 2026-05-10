@@ -4,7 +4,7 @@ import { mergePrivacyContent } from "@/lib/page-content"
 
 export const dynamic = "force-dynamic"
 
-export default async function PrivacyPolicyPage() {
+export default async function PrivacyPage() {
   let content = mergePrivacyContent()
 
   try {

@@ -4,6 +4,7 @@ import {
   CalendarClock,
   FileText,
   GraduationCap,
+  Handshake,
   MessageSquareText,
   Newspaper,
   Users,
@@ -28,6 +29,12 @@ type RecentLead = {
   detail?: string
   status?: string
   createdAt?: Date | string
+}
+
+type ChartItem = {
+  label: string
+  value: number
+  href?: string
 }
 
 function formatDate(value?: Date | string) {
@@ -157,6 +164,8 @@ async function getDashboardData() {
 }
 
 function StatusBreakdown({ title, items }: { title: string; items: StatusCount[] }) {
+  const total = items.reduce((sum, item) => sum + item.count, 0)
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -168,12 +177,63 @@ function StatusBreakdown({ title, items }: { title: string; items: StatusCount[]
           <p className="text-sm text-muted-foreground">No records yet.</p>
         ) : (
           items.map((item) => (
-            <div key={item._id ?? "unknown"} className="flex items-center justify-between gap-4">
-              <span className="text-sm font-medium capitalize text-foreground">{normalizeStatus(item._id)}</span>
-              <Badge variant="secondary">{item.count}</Badge>
+            <div key={item._id ?? "unknown"} className="space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium capitalize text-foreground">{normalizeStatus(item._id)}</span>
+                <Badge variant="secondary">{item.count}</Badge>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{ width: `${total ? Math.max((item.count / total) * 100, 4) : 0}%` }}
+                />
+              </div>
             </div>
           ))
         )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function OverviewChart({ title, description, items }: { title: string; description: string; items: ChartItem[] }) {
+  const max = Math.max(...items.map((item) => item.value), 1)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {items.map((item) => {
+          const row = (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="font-medium text-foreground">{item.label}</span>
+                <span className="text-muted-foreground">{item.value}</span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{ width: `${Math.max((item.value / max) * 100, item.value > 0 ? 5 : 0)}%` }}
+                />
+              </div>
+            </div>
+          )
+
+          return item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="block rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {row}
+            </Link>
+          ) : (
+            <div key={item.label}>{row}</div>
+          )
+        })}
       </CardContent>
     </Card>
   )
@@ -255,51 +315,89 @@ export default async function AdminDashboard() {
           value={totals.totalAppointments}
           description={`${totals.pendingAppointments} pending review`}
           icon={CalendarClock}
+          href="/admin/appointments"
         />
         <StatCard
           title="Counselling Forms"
           value={totals.totalCounseling}
           description={`${totals.pendingCounseling} pending follow-up`}
           icon={MessageSquareText}
+          href="/admin/student-counseling"
         />
         <StatCard
           title="Online Applications"
           value={totals.totalApplications}
           description={`${totals.pendingApplications} pending review`}
           icon={FileText}
+          href="/admin/online-application"
         />
         <StatCard
           title="Users"
           value={totals.totalUsers}
           description={`${totals.activeUsers} active accounts`}
           icon={Users}
+          href="/admin/users"
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <StatCard
           title="Blogs"
           value={totals.totalBlogs}
           description={`${totals.publishedBlogs} published`}
           icon={Newspaper}
+          href="/admin/blogs"
         />
         <StatCard
           title="Services"
           value={totals.totalServices}
           description={`${totals.activeServices} active`}
           icon={BookOpen}
+          href="/admin/services"
         />
         <StatCard
           title="Courses"
           value={totals.totalCourses}
           description={`${totals.activeCourses} active`}
           icon={GraduationCap}
+          href="/admin/courses"
         />
         <StatCard
-          title="Proof Assets"
-          value={totals.testimonials + totals.partners}
-          description={`${totals.testimonials} testimonials, ${totals.partners} partners`}
+          title="Testimonials"
+          value={totals.testimonials}
+          description="Student success proof"
           icon={Users}
+          href="/admin/testimonials"
+        />
+        <StatCard
+          title="Partners"
+          value={totals.partners}
+          description="Active partner logos"
+          icon={Handshake}
+          href="/admin/partners"
+        />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <OverviewChart
+          title="Lead Sources"
+          description="Volume across enquiry and application channels"
+          items={[
+            { label: "Appointments", value: totals.totalAppointments, href: "/admin/appointments" },
+            { label: "Counselling Forms", value: totals.totalCounseling, href: "/admin/student-counseling" },
+            { label: "Online Applications", value: totals.totalApplications, href: "/admin/online-application" },
+          ]}
+        />
+        <OverviewChart
+          title="Content & Site Data"
+          description="Manageable content currently available"
+          items={[
+            { label: "Blogs", value: totals.totalBlogs, href: "/admin/blogs" },
+            { label: "Services", value: totals.totalServices, href: "/admin/services" },
+            { label: "Courses", value: totals.totalCourses, href: "/admin/courses" },
+            { label: "Testimonials", value: totals.testimonials, href: "/admin/testimonials" },
+            { label: "Partners", value: totals.partners, href: "/admin/partners" },
+          ]}
         />
       </div>
 

@@ -13,16 +13,41 @@ import {
 } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Loader2, Save, Plus, X, Globe, Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react"
+import { normalizeBusinessOffices, type BusinessOffice } from "@/lib/business-contact"
+
+type BusinessDetailsForm = {
+  name: string
+  logo: string
+  address: string
+  emails: string[]
+  phones: string[]
+  offices: BusinessOffice[]
+  socialLinks: {
+    facebook: string
+    twitter: string
+    linkedin: string
+    instagram: string
+    youtube: string
+  }
+}
+
+const emptyOffice: BusinessOffice = {
+  label: "",
+  address: "",
+  emails: [],
+  phones: [""],
+}
 
 export default function BusinessDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [details, setDetails] = useState({
+  const [details, setDetails] = useState<BusinessDetailsForm>({
     name: "Synergy Scholars",
     logo: "",
     address: "",
     emails: ["info@synergyscholars.com"],
     phones: ["+977 9800000000"],
+    offices: [{ ...emptyOffice, label: "Head Office" }],
     socialLinks: {
       facebook: "",
       twitter: "",
@@ -41,10 +66,13 @@ export default function BusinessDetailsPage() {
       const res = await fetch("/api/business-details")
       const data = await res.json()
       if (data.details) {
+        const normalizedOffices = normalizeBusinessOffices(data.details)
+
         setDetails({
           ...data.details,
           emails: data.details.emails || [],
           phones: data.details.phones || [],
+          offices: normalizedOffices.length > 0 ? normalizedOffices : [{ ...emptyOffice, label: "Head Office" }],
           socialLinks: {
             facebook: data.details.socialLinks?.facebook || "",
             twitter: data.details.socialLinks?.twitter || "",
@@ -64,11 +92,29 @@ export default function BusinessDetailsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
+    const offices = details.offices
+      .map((office) => ({
+        label: office.label.trim() || "Office",
+        address: office.address.trim(),
+        phones: office.phones.map((phone) => phone.trim()).filter(Boolean),
+        emails: office.emails.map((email) => email.trim()).filter(Boolean),
+      }))
+      .filter((office) => office.address || office.phones.length > 0 || office.emails.length > 0)
+    const fallbackPhones = details.phones.map((phone) => phone.trim()).filter(Boolean)
+    const fallbackEmails = details.emails.map((email) => email.trim()).filter(Boolean)
+    const payload = {
+      ...details,
+      offices,
+      phones: fallbackPhones.length > 0 ? fallbackPhones : offices.flatMap((office) => office.phones),
+      emails: fallbackEmails.length > 0 ? fallbackEmails : offices.flatMap((office) => office.emails),
+      address: offices.map((office) => `${office.label}: ${office.address}`).join("\n"),
+    }
+
     try {
       const res = await fetch("/api/business-details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(details)
+        body: JSON.stringify(payload)
       })
       if (res.ok) {
         toast.success("Business details updated successfully")
@@ -99,6 +145,50 @@ export default function BusinessDetailsPage() {
     const newList = [...details[field]]
     newList[index] = value
     setDetails({ ...details, [field]: newList })
+  }
+
+  const addOffice = () => {
+    setDetails({
+      ...details,
+      offices: [...details.offices, { ...emptyOffice }],
+    })
+  }
+
+  const removeOffice = (index: number) => {
+    const offices = [...details.offices]
+    offices.splice(index, 1)
+    setDetails({ ...details, offices: offices.length > 0 ? offices : [{ ...emptyOffice, label: "Head Office" }] })
+  }
+
+  const updateOffice = (index: number, field: "label" | "address", value: string) => {
+    const offices = [...details.offices]
+    offices[index] = { ...offices[index], [field]: value }
+    setDetails({ ...details, offices })
+  }
+
+  const addOfficeItem = (officeIndex: number, field: "phones" | "emails") => {
+    const offices = [...details.offices]
+    offices[officeIndex] = {
+      ...offices[officeIndex],
+      [field]: [...offices[officeIndex][field], ""],
+    }
+    setDetails({ ...details, offices })
+  }
+
+  const removeOfficeItem = (officeIndex: number, field: "phones" | "emails", itemIndex: number) => {
+    const offices = [...details.offices]
+    const items = [...offices[officeIndex][field]]
+    items.splice(itemIndex, 1)
+    offices[officeIndex] = { ...offices[officeIndex], [field]: items }
+    setDetails({ ...details, offices })
+  }
+
+  const updateOfficeItem = (officeIndex: number, field: "phones" | "emails", itemIndex: number, value: string) => {
+    const offices = [...details.offices]
+    const items = [...offices[officeIndex][field]]
+    items[itemIndex] = value
+    offices[officeIndex] = { ...offices[officeIndex], [field]: items }
+    setDetails({ ...details, offices })
   }
 
   if (loading) {
@@ -145,15 +235,106 @@ export default function BusinessDetailsPage() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Physical Address</label>
-              <Textarea 
-                value={details.address}
-                onChange={(e) => setDetails({ ...details, address: e.target.value })}
-                placeholder="Putalisadak, Kathmandu, Nepal"
-                required
-              />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-red-500" />
+                Office Locations
+              </CardTitle>
+              <CardDescription>Add each address with its relevant phone numbers and emails.</CardDescription>
             </div>
+            <Button type="button" variant="outline" size="sm" onClick={addOffice}>
+              <Plus className="h-4 w-4 mr-1" /> Add Office
+            </Button>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            {details.offices.map((office, officeIndex) => (
+              <div key={officeIndex} className="rounded-xl border bg-muted/20 p-4 space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="grid flex-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Office Name</label>
+                      <Input
+                        value={office.label}
+                        onChange={(e) => updateOffice(officeIndex, "label", e.target.value)}
+                        placeholder="Head Office"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Address</label>
+                      <Textarea
+                        value={office.address}
+                        onChange={(e) => updateOffice(officeIndex, "address", e.target.value)}
+                        placeholder="Putalisadak, Kathmandu, Nepal"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {details.offices.length > 1 && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeOffice(officeIndex)}>
+                      <X className="h-4 w-4 text-red-500" />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium">Office Phones</label>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => addOfficeItem(officeIndex, "phones")}>
+                        <Plus className="h-4 w-4 mr-1" /> Add
+                      </Button>
+                    </div>
+                    {office.phones.map((phone, phoneIndex) => (
+                      <div key={phoneIndex} className="flex gap-2">
+                        <Input
+                          value={phone}
+                          onChange={(e) => updateOfficeItem(officeIndex, "phones", phoneIndex, e.target.value)}
+                          placeholder="+977 1234567890"
+                        />
+                        {office.phones.length > 1 && (
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removeOfficeItem(officeIndex, "phones", phoneIndex)}>
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium">Office Emails <span className="text-muted-foreground">(optional)</span></label>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => addOfficeItem(officeIndex, "emails")}>
+                        <Plus className="h-4 w-4 mr-1" /> Add
+                      </Button>
+                    </div>
+                    {office.emails.length === 0 ? (
+                      <p className="rounded-lg border border-dashed bg-background px-3 py-2 text-sm text-muted-foreground">
+                        No email added for this branch.
+                      </p>
+                    ) : (
+                      office.emails.map((email, emailIndex) => (
+                        <div key={emailIndex} className="flex gap-2">
+                          <Input
+                            value={email}
+                            onChange={(e) => updateOfficeItem(officeIndex, "emails", emailIndex, e.target.value)}
+                            placeholder="info@example.com"
+                            type="email"
+                          />
+                          <Button type="button" variant="ghost" size="icon" onClick={() => removeOfficeItem(officeIndex, "emails", emailIndex)}>
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
@@ -164,9 +345,9 @@ export default function BusinessDetailsPage() {
               <div className="space-y-1">
                 <CardTitle className="flex items-center gap-2">
                   <Mail className="h-5 w-5 text-blue-500" />
-                  Emails
+                  Fallback Emails
                 </CardTitle>
-                <CardDescription>Multiple contact emails</CardDescription>
+                <CardDescription>General emails for legacy/footer contact display.</CardDescription>
               </div>
               <Button type="button" variant="outline" size="sm" onClick={() => addItem('emails')}>
                 <Plus className="h-4 w-4 mr-1" /> Add
@@ -180,7 +361,6 @@ export default function BusinessDetailsPage() {
                     onChange={(e) => updateItem('emails', index, e.target.value)}
                     placeholder="info@example.com"
                     type="email"
-                    required
                   />
                   {details.emails.length > 1 && (
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeItem('emails', index)}>
@@ -198,9 +378,9 @@ export default function BusinessDetailsPage() {
               <div className="space-y-1">
                 <CardTitle className="flex items-center gap-2">
                   <Phone className="h-5 w-5 text-green-500" />
-                  Phone Numbers
+                  Fallback Phone Numbers
                 </CardTitle>
-                <CardDescription>Multiple contact numbers</CardDescription>
+                <CardDescription>General numbers for legacy/footer contact display.</CardDescription>
               </div>
               <Button type="button" variant="outline" size="sm" onClick={() => addItem('phones')}>
                 <Plus className="h-4 w-4 mr-1" /> Add
@@ -213,7 +393,6 @@ export default function BusinessDetailsPage() {
                     value={phone}
                     onChange={(e) => updateItem('phones', index, e.target.value)}
                     placeholder="+977 1234567890"
-                    required
                   />
                   {details.phones.length > 1 && (
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeItem('phones', index)}>

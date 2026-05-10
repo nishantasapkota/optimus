@@ -2,9 +2,11 @@ import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Phone, MapPin } 
 import { getBusinessDetails } from "@/lib/db-utils"
 import Link from "next/link"
 import Image from "next/image"
+import { normalizeBusinessOffices } from "@/lib/business-contact"
 
 export async function Footer() {
   const details = await getBusinessDetails()
+  const offices = normalizeBusinessOffices(details)
 
   const businessName = details?.name || "Optimus Global"
   const firstName = businessName.split(" ")[0]
@@ -28,7 +30,7 @@ export async function Footer() {
 
   const legalLinks = [
     { label: "Terms & Conditions", href: "/terms-and-conditions" },
-    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Privacy Policy", href: "/privacy" },
   ]
 
   return (
@@ -122,16 +124,29 @@ export async function Footer() {
           <div className="space-y-5 lg:col-span-4">
             <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-red-500">Contact</h3>
             <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-red-400" />
+              {offices.length > 0 ? (
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <MapPin className="h-5 w-5 text-red-400" />
+                  </div>
+                  <div className="space-y-2">
+                    {offices.map((office) => (
+                      <p key={`${office.label}-${office.address}`} className="text-white/70 font-medium text-sm leading-relaxed">
+                        <span className="font-bold text-white/80">{office.label}:</span> {office.address}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-white/70 font-medium text-sm leading-relaxed">
-                  {details?.address || "Kathmandu, Nepal"}
-                </span>
-              </div>
+              ) : (
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <MapPin className="h-5 w-5 text-red-400" />
+                  </div>
+                  <span className="text-white/70 font-medium text-sm leading-relaxed">Kathmandu, Nepal</span>
+                </div>
+              )}
               {details?.phones?.map((phone, i) => (
-                <div key={i} className="flex gap-4">
+                <div key={i} className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <Phone className="h-5 w-5 text-red-400" />
                   </div>
@@ -139,7 +154,7 @@ export async function Footer() {
                 </div>
               ))}
               {details?.emails?.map((email, i) => (
-                <div key={i} className="flex gap-4">
+                <div key={i} className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                     <Mail className="h-5 w-5 text-red-400" />
                   </div>
