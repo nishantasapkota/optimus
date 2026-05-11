@@ -31,7 +31,7 @@ export function getShareImageUrl(imageUrl?: string | null) {
   if (imageUrl.includes("res.cloudinary.com") && imageUrl.includes("/image/upload/")) {
     return imageUrl.replace(
       "/image/upload/",
-      "/image/upload/c_fill,w_1200,h_630,g_auto,q_auto:good/",
+      "/image/upload/c_fill,w_1200,h_630,g_auto,q_auto:eco,f_jpg/",
     )
   }
 
