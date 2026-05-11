@@ -1,5 +1,13 @@
 import { DetailLayout } from "@/components/public/detail-layout"
 import { getBlogBySlug, getBlogs } from "@/lib/db-utils"
+import {
+  absoluteUrl,
+  buildSeoDescription,
+  cleanText,
+  createPageMetadata,
+  siteName,
+} from "@/lib/seo"
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 
@@ -9,6 +17,46 @@ interface BlogDetailPageProps {
   params: Promise<{
     slug: string
   }>
+}
+
+export async function generateMetadata({ params }: BlogDetailPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const blog = await getBlogBySlug(slug)
+
+  if (!blog) {
+    return createPageMetadata({
+      title: "Blog not found",
+      description: "The requested Optimus Global blog post could not be found.",
+      path: `/blogs/${slug}`,
+      noIndex: true,
+    })
+  }
+
+  const title = cleanText(blog.title)
+  const description = buildSeoDescription(blog.excerpt, blog.content)
+  const imageUrl = `/blogs/${slug}/opengraph-image`
+  const publishedTime = blog.publishedAt?.toISOString?.() ?? blog.createdAt?.toISOString?.()
+  const modifiedTime = blog.updatedAt?.toISOString?.()
+
+  return createPageMetadata({
+    title,
+    description,
+    path: `/blogs/${slug}`,
+    type: "article",
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: title,
+      },
+    ],
+    publishedTime,
+    modifiedTime,
+    authors: blog.author ? [blog.author] : [siteName],
+    tags: blog.tags,
+    noIndex: blog.status !== "published",
+  })
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
@@ -34,6 +82,35 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   } catch (error) {
     console.error("Failed to fetch blogs for sidebar:", error)
   }
+
+  const publishedTime = blog.publishedAt?.toISOString?.() ?? blog.createdAt?.toISOString?.()
+  const modifiedTime = blog.updatedAt?.toISOString?.()
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: cleanText(blog.title),
+    description: buildSeoDescription(blog.excerpt, blog.content),
+    image: absoluteUrl(`/blogs/${slug}/opengraph-image`),
+    datePublished: publishedTime,
+    dateModified: modifiedTime,
+    author: {
+      "@type": "Person",
+      name: blog.author || siteName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: siteName,
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/placeholder-logo.png"),
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/blogs/${slug}`),
+    },
+    keywords: blog.tags?.join(", "),
+  }
   
   const sidebarItems = recentBlogs
     .filter(b => b.slug !== slug)
@@ -54,6 +131,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       sidebarTitle="Recent Posts"
       sidebarItems={sidebarItems}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="space-y-8">
         {blog.featuredImage && (
           <div className="relative h-[400px] w-full rounded-xl overflow-hidden bg-gray-100">
