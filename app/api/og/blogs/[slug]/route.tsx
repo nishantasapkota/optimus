@@ -9,13 +9,13 @@ export const size = {
 }
 export const contentType = "image/png"
 
-interface BlogOpenGraphImageProps {
+interface BlogOpenGraphImageContext {
   params: Promise<{
     slug: string
   }>
 }
 
-export default async function BlogOpenGraphImage({ params }: BlogOpenGraphImageProps) {
+export async function GET(_request: Request, { params }: BlogOpenGraphImageContext) {
   const { slug } = await params
   const blog = await getBlogBySlug(slug)
 

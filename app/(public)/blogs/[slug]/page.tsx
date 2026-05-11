@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
 
   const title = cleanText(blog.title)
   const description = buildSeoDescription(blog.excerpt, blog.content)
-  const imageUrl = `/blogs/${slug}/opengraph-image`
+  const imageUrl = blog.featuredImage || `/api/og/blogs/${slug}`
   const publishedTime = blog.publishedAt?.toISOString?.() ?? blog.createdAt?.toISOString?.()
   const modifiedTime = blog.updatedAt?.toISOString?.()
 
@@ -90,7 +90,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     "@type": "BlogPosting",
     headline: cleanText(blog.title),
     description: buildSeoDescription(blog.excerpt, blog.content),
-    image: absoluteUrl(`/blogs/${slug}/opengraph-image`),
+    image: absoluteUrl(blog.featuredImage || `/api/og/blogs/${slug}`),
     datePublished: publishedTime,
     dateModified: modifiedTime,
     author: {
