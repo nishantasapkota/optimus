@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getCourses, getCoursesCount, createCourse } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
 
@@ -28,6 +29,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const unauthorized = await requireAdmin()
+    if (unauthorized) return unauthorized
+
     const body = await request.json()
     const result = await createCourse(body)
     return NextResponse.json({ success: true, id: result.insertedId })

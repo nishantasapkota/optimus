@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getBusinessDetails, updateBusinessDetails } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET() {
     try {
@@ -13,6 +14,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const body = await request.json()
         const result = await updateBusinessDetails(body)
         return NextResponse.json({ success: true, result })

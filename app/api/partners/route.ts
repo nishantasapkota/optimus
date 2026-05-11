@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getPartners, createPartner, deletePartner } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET() {
     try {
@@ -13,6 +14,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const body = await request.json()
         const result = await createPartner(body)
         return NextResponse.json({ success: true, result })
@@ -24,6 +28,9 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get("id")
         if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 })

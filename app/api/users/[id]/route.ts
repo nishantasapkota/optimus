@@ -1,30 +1,23 @@
 import { NextResponse } from "next/server"
 import { updateUser, deleteUser } from "@/lib/db-utils"
-import { cookies } from "next/headers"
-import { getDatabase } from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const unauthorized = await requireAdmin(["admin", "superadmin"])
+    if (unauthorized) return unauthorized
+
     const { id } = await params
-
-    // only admin
-    const cookieStore = await cookies()
-    const adminSession = cookieStore.get("admin_session")?.value
-    if (!adminSession) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const db = await getDatabase()
-    const admin = await db.collection("admins").findOne({ _id: new ObjectId(adminSession) })
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
     const userData = await request.json()
 
-  // Remove client-only fields
-  delete (userData as any).confirmPassword
+    if (["admin", "superadmin"].includes(userData.role)) {
+      return NextResponse.json({ error: "Assigning admin roles in the users collection is not allowed" }, { status: 403 })
+    }
 
-  await updateUser(id, userData)
+    // Remove client-only fields
+    delete (userData as any).confirmPassword
+
+    await updateUser(id, userData)
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -35,18 +28,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const unauthorized = await requireAdmin(["admin", "superadmin"])
+    if (unauthorized) return unauthorized
+
     const { id } = await params
-
-    // only admin
-    const cookieStore = await cookies()
-    const adminSession = cookieStore.get("admin_session")?.value
-    if (!adminSession) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const db = await getDatabase()
-    const admin = await db.collection("admins").findOne({ _id: new ObjectId(adminSession) })
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     await deleteUser(id)
 

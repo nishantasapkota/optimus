@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
 import { getUsers, createUser } from "@/lib/db-utils"
-import { cookies } from "next/headers"
-import { getDatabase } from "@/lib/mongodb"
-import { ObjectId } from "mongodb"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET() {
   try {
@@ -23,23 +21,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    // Only admin can create users
-    const cookieStore = await cookies()
-    const adminSession = cookieStore.get("admin_session")?.value
-    if (!adminSession) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // ensure admin exists
-    const db = await getDatabase()
-    const admin = await db.collection("admins").findOne({ _id: new ObjectId(adminSession) })
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const unauthorized = await requireAdmin(["admin", "superadmin"])
+    if (unauthorized) return unauthorized
 
     const userData = await request.json()
 
-    // Disallow creating a user with role 'admin' in the users collection
-    if (userData.role === 'admin') {
-      return NextResponse.json({ error: 'Creating admin users in the users collection is not allowed' }, { status: 403 })
+    // Disallow privileged admin roles in the users collection
+    if (["admin", "superadmin"].includes(userData.role)) {
+      return NextResponse.json({ error: "Creating admin users in the users collection is not allowed" }, { status: 403 })
     }
 
     // Enforce password on create

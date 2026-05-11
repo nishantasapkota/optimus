@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServiceById, updateService, deleteService } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
@@ -17,6 +18,9 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
 export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const unauthorized = await requireAdmin()
+    if (unauthorized) return unauthorized
+
     const { id } = await context.params
     const body = await request.json()
     const result = await updateService(id, body)
@@ -29,6 +33,9 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const unauthorized = await requireAdmin()
+    if (unauthorized) return unauthorized
+
     const { id } = await context.params
     const result = await deleteService(id)
     return NextResponse.json({ success: true, deleted: result.deletedCount })

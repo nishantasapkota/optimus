@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server"
 import { getTestimonialById, updateTestimonial, deleteTestimonial } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET(
     request: Request,
     context: { params: Promise<{ id: string }> }
 ) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const { id } = await context.params
         const testimonial = await getTestimonialById(id)
         if (!testimonial) {
@@ -23,6 +27,9 @@ export async function PATCH(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const { id } = await context.params
         const body = await request.json()
         const result = await updateTestimonial(id, body)

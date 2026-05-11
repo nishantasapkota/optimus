@@ -6,9 +6,13 @@ import {
   getCloudinaryConfig,
   getCloudinaryUploadPreset,
 } from "@/lib/cloudinary"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function POST(request: NextRequest) {
   try {
+    const unauthorized = await requireAdmin()
+    if (unauthorized) return unauthorized
+
     const formData = await request.formData()
     const file = formData.get("file") as File
 

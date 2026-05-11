@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getPageContent, upsertPageContent } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 const allowedSlugs = new Set(["home", "about", "terms-and-conditions", "privacy-policy"])
 
@@ -19,6 +20,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { slug } = await params
   if (!allowedSlugs.has(slug)) {
     return NextResponse.json({ error: "Invalid page" }, { status: 400 })

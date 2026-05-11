@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getStudentCounselingById, updateStudentCounseling, deleteStudentCounseling } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 interface RouteParams {
     params: Promise<{
@@ -25,6 +26,9 @@ export async function GET(request: Request, { params }: RouteParams) {
 
 export async function PUT(request: Request, { params }: RouteParams) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const { id } = await params
         const body = await request.json()
 
@@ -43,6 +47,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
     try {
+        const unauthorized = await requireAdmin()
+        if (unauthorized) return unauthorized
+
         const { id } = await params
         const result = await deleteStudentCounseling(id)
 

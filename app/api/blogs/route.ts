@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { getBlogs, getBlogsCount, createBlog } from "@/lib/db-utils"
+import { requireAdmin } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
 
@@ -31,6 +32,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const unauthorized = await requireAdmin()
+    if (unauthorized) return unauthorized
+
     const body = await request.json()
     const result = await createBlog(body)
     return NextResponse.json({ success: true, id: result.insertedId })
@@ -39,4 +43,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to create blog" }, { status: 500 })
   }
 }
-
