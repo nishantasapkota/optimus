@@ -5,6 +5,7 @@ import {
   buildSeoDescription,
   cleanText,
   createPageMetadata,
+  getShareImageUrl,
   siteName,
 } from "@/lib/seo"
 import type { Metadata } from "next"
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
 
   const title = cleanText(blog.title)
   const description = buildSeoDescription(blog.excerpt, blog.content)
-  const imageUrl = blog.featuredImage || `/api/og/blogs/${slug}`
+  const imageUrl = getShareImageUrl(blog.featuredImage) || `/api/og/blogs/${slug}`
   const publishedTime = blog.publishedAt?.toISOString?.() ?? blog.createdAt?.toISOString?.()
   const modifiedTime = blog.updatedAt?.toISOString?.()
 
@@ -90,7 +91,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     "@type": "BlogPosting",
     headline: cleanText(blog.title),
     description: buildSeoDescription(blog.excerpt, blog.content),
-    image: absoluteUrl(blog.featuredImage || `/api/og/blogs/${slug}`),
+    image: absoluteUrl(getShareImageUrl(blog.featuredImage) || `/api/og/blogs/${slug}`),
     datePublished: publishedTime,
     dateModified: modifiedTime,
     author: {

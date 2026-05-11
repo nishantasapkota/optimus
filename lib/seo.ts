@@ -25,6 +25,19 @@ export function absoluteUrl(pathOrUrl?: string | null) {
   }
 }
 
+export function getShareImageUrl(imageUrl?: string | null) {
+  if (!imageUrl) return null
+
+  if (imageUrl.includes("res.cloudinary.com") && imageUrl.includes("/image/upload/")) {
+    return imageUrl.replace(
+      "/image/upload/",
+      "/image/upload/c_fill,w_1200,h_630,g_auto,q_auto:good/",
+    )
+  }
+
+  return imageUrl
+}
+
 export function cleanText(value?: string | null, fallback = "") {
   if (!value) return fallback
 
