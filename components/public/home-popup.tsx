@@ -19,6 +19,25 @@ interface HomePopupProps {
   } | null
 }
 
+function getPlainTextFromHtml(value?: string) {
+  if (!value) return ""
+
+  return value
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<\/(p|div|li|h[1-6])>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
 export function HomePopup({ initialEvent }: HomePopupProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -42,7 +61,9 @@ export function HomePopup({ initialEvent }: HomePopupProps) {
     slug: "global-expo-2025"
   }
 
-  const description = displayEvent.description || "Connect with our counseling team and discover the right university pathway for your profile."
+  const description =
+    getPlainTextFromHtml(displayEvent.description) ||
+    "Connect with our counseling team and discover the right university pathway for your profile."
   const shortDescription =
     description.length > 190 ? `${description.slice(0, 187)}...` : description
 
