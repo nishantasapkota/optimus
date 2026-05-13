@@ -60,7 +60,7 @@ export function BlogsPageClient() {
             <div className="max-w-xl">
               <span className="text-red-600  font-bold uppercase tracking-[0.2em] text-sm mb-4 block">Expert Resources</span>
               <h2 className="text-4xl md:text-6xl  font-bold text-blue-950 tracking-tighter leading-tight">
-                Latest from <br /> <span className="text-red-600 underline">Unity Insights</span>
+                Latest from <br /> <span className="text-red-600 underline">Optimus Global Insights</span>
               </h2>
             </div>
             
@@ -240,5 +240,4 @@ export function BlogsPageClient() {
     </div>
   )
 }
-
 

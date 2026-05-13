@@ -119,7 +119,7 @@ export function Events({ initialEvent }: EventsProps) {
                     </div>
                     <div>
                       <p className="text-xs  font-bold text-blue-900/40 uppercase tracking-widest">Global Location</p>
-                      <p className="text-blue-950 font-bold text-lg">{event.location || "Unity Hub"}</p>
+                      <p className="text-blue-950 font-bold text-lg">{event.location || "Optimus Global Hub"}</p>
                     </div>
                   </div>
                 </div>

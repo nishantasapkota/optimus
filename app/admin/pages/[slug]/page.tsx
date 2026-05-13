@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { toast } from "sonner"
-import { Loader2, Save } from "lucide-react"
+import { Loader2, Plus, Save, Trash2 } from "lucide-react"
 import {
   aboutDefaultContent,
   homeDefaultContent,
@@ -96,6 +96,27 @@ export default function PageContentEditor() {
         cursor = cursor[path[i]]
       }
       cursor[path[path.length - 1]] = value
+      return next
+    })
+  }
+
+  const addDestination = () => {
+    setContent((prev) => {
+      if (!prev || slug !== "home") return prev
+      const next = cloneDeep(prev) as HomePageContent
+      next.destinations.items.push({
+        name: "",
+        image: "/placeholder.jpg",
+      })
+      return next
+    })
+  }
+
+  const removeDestination = (index: number) => {
+    setContent((prev) => {
+      if (!prev || slug !== "home") return prev
+      const next = cloneDeep(prev) as HomePageContent
+      next.destinations.items = next.destinations.items.filter((_, itemIndex) => itemIndex !== index)
       return next
     })
   }
@@ -261,8 +282,16 @@ export default function PageContentEditor() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Destinations</CardTitle>
-                <CardDescription>Section heading and featured destinations.</CardDescription>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <CardTitle>Destinations</CardTitle>
+                    <CardDescription>Section heading and featured destinations.</CardDescription>
+                  </div>
+                  <Button type="button" onClick={addDestination} variant="outline" className="shrink-0">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Destination
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-3">
@@ -291,19 +320,39 @@ export default function PageContentEditor() {
                 <div className="grid gap-4 md:grid-cols-2">
                   {homeContent.destinations.items.map((item, index) => (
                     <div key={index} className="space-y-2 rounded-xl border border-slate-200 p-4">
-                      <label className="text-sm font-medium">Destination {index + 1} Name</label>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold">Destination {index + 1}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeDestination(index)}
+                          className="h-8 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                          <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                          Remove
+                        </Button>
+                      </div>
+                      <label className="text-sm font-medium">Name</label>
                       <Input
                         value={item.name}
+                        placeholder="e.g. United Kingdom"
                         onChange={(e) => updateField(["destinations", "items", index, "name"], e.target.value)}
                       />
-                      <label className="text-sm font-medium">Destination {index + 1} Image</label>
+                      <label className="text-sm font-medium">Image</label>
                       <Input
                         value={item.image}
+                        placeholder="/destinations/uk.png or https://..."
                         onChange={(e) => updateField(["destinations", "items", index, "image"], e.target.value)}
                       />
                     </div>
                   ))}
                 </div>
+                {homeContent.destinations.items.length === 0 && (
+                  <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-muted-foreground">
+                    No destinations yet. Click “Add Destination” to create one.
+                  </div>
+                )}
               </CardContent>
             </Card>
 

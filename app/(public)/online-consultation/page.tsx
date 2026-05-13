@@ -81,7 +81,7 @@ export default function OnlineConsultationPage() {
                       <Zap className="w-6 h-6" />
                    </div>
                    <div>
-                      <h5 className="text-white  font-bold uppercase tracking-widest text-xs">Unity Direct</h5>
+                      <h5 className="text-white  font-bold uppercase tracking-widest text-xs">Optimus Global Direct</h5>
                       <p className="text-blue-100/60 font-bold text-sm">Real-time Global Connectivity</p>
                    </div>
                 </div>
@@ -146,4 +146,3 @@ export default function OnlineConsultationPage() {
     </div>
   )
 }
-
