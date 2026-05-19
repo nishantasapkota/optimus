@@ -15,6 +15,7 @@ export async function Footer() {
   const exploreLinks = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about-us" },
+    { label: "Founder", href: "/founder" },
     { label: "Services", href: "/services" },
     { label: "Courses", href: "/courses" },
     { label: "Global Events", href: "/event" },

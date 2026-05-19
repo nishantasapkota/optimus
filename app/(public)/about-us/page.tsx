@@ -6,12 +6,14 @@ import { motion } from "framer-motion"
 import { Play, Target, Gem, Eye } from "lucide-react"
 import { PageHero } from "@/components/public/page-hero"
 import { CtaJourney } from "@/components/public/cta-journey"
-import { aboutDefaultContent, mergeAboutContent } from "@/lib/page-content"
+import { FounderSpotlight } from "@/components/public/founder-spotlight"
+import { aboutDefaultContent, founderDefaultContent, mergeAboutContent, mergeFounderContent } from "@/lib/page-content"
 
 export default function AboutUsPage() {
   const [bodMembers, setBodMembers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [content, setContent] = useState(aboutDefaultContent)
+  const [founderContent, setFounderContent] = useState(founderDefaultContent)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -35,6 +37,17 @@ export default function AboutUsPage() {
       })
       .catch(err => console.error("Error fetching about page content:", err))
   }, [mergeAboutContent])
+
+  useEffect(() => {
+    fetch("/api/pages/founder")
+      .then(res => res.json())
+      .then(data => {
+        if (data?.content) {
+          setFounderContent(mergeFounderContent(data.content))
+        }
+      })
+      .catch(err => console.error("Error fetching founder page content:", err))
+  }, [])
 
   return (
     <div className="flex flex-col gap-0 bg-white min-h-screen text-slate-900">
@@ -205,6 +218,8 @@ export default function AboutUsPage() {
           </div>
         </div>
       </section>
+
+      <FounderSpotlight founder={founderContent.founder} />
 
       {/* Our Team Section */}
       <section className="py-24 bg-slate-50">

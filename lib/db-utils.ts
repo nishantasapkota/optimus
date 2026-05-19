@@ -155,6 +155,22 @@ export interface Service {
   updatedAt: Date
 }
 
+export interface Destination {
+  _id?: ObjectId
+  name: string
+  slug: string
+  description: string
+  shortDescription: string
+  metaTitle: string
+  metaDescription: string
+  status: "active" | "inactive"
+  highlights: string[]
+  popularPrograms: string[]
+  image?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Course {
   _id?: ObjectId
   name: string
@@ -384,6 +400,79 @@ export async function deleteService(id: string) {
   const db = await getDatabase()
   const result = await db.collection<Service>("services").deleteOne({ _id: new ObjectId(id) })
   return result
+}
+
+// Destination operations
+export async function getDestinations(limit = 10, skip = 0, search = "") {
+  const db = await getDatabase()
+  const query = search
+    ? {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+          { shortDescription: { $regex: search, $options: "i" } },
+          { metaTitle: { $regex: search, $options: "i" } },
+          { metaDescription: { $regex: search, $options: "i" } },
+        ],
+      }
+    : {}
+
+  return await db
+    .collection<Destination>("destinations")
+    .find(query)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(skip)
+    .toArray()
+}
+
+export async function getDestinationsCount(search = "") {
+  const db = await getDatabase()
+  const query = search
+    ? {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+          { shortDescription: { $regex: search, $options: "i" } },
+          { metaTitle: { $regex: search, $options: "i" } },
+          { metaDescription: { $regex: search, $options: "i" } },
+        ],
+      }
+    : {}
+
+  return await db.collection<Destination>("destinations").countDocuments(query)
+}
+
+export async function getDestinationById(id: string) {
+  const db = await getDatabase()
+  return await db.collection<Destination>("destinations").findOne({ _id: new ObjectId(id) })
+}
+
+export async function getDestinationBySlug(slug: string) {
+  const db = await getDatabase()
+  return await db.collection<Destination>("destinations").findOne({ slug })
+}
+
+export async function createDestination(destinationData: Omit<Destination, "_id" | "createdAt" | "updatedAt">) {
+  const db = await getDatabase()
+  return await db.collection<Destination>("destinations").insertOne({
+    ...destinationData,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  })
+}
+
+export async function updateDestination(id: string, destinationData: Partial<Destination>) {
+  const db = await getDatabase()
+  const safeDestinationData = stripImmutableFields({ ...destinationData } as any)
+  return await db
+    .collection<Destination>("destinations")
+    .updateOne({ _id: new ObjectId(id) }, { $set: { ...safeDestinationData, updatedAt: new Date() } })
+}
+
+export async function deleteDestination(id: string) {
+  const db = await getDatabase()
+  return await db.collection<Destination>("destinations").deleteOne({ _id: new ObjectId(id) })
 }
 
 // Appointment interface and CRUD operations

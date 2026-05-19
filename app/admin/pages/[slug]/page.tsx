@@ -11,14 +11,17 @@ import { toast } from "sonner"
 import { Loader2, Plus, Save, Trash2 } from "lucide-react"
 import {
   aboutDefaultContent,
+  founderDefaultContent,
   homeDefaultContent,
   privacyDefaultContent,
   termsDefaultContent,
   mergeAboutContent,
+  mergeFounderContent,
   mergeHomeContent,
   mergePrivacyContent,
   mergeTermsContent,
   type AboutPageContent,
+  type FounderPageContent,
   type HomePageContent,
   type LegalPageContent,
 } from "@/lib/page-content"
@@ -34,6 +37,11 @@ const pageConfig = {
     defaultContent: aboutDefaultContent,
     merge: mergeAboutContent,
   },
+  founder: {
+    label: "Founder",
+    defaultContent: founderDefaultContent,
+    merge: mergeFounderContent,
+  },
   "terms-and-conditions": {
     label: "Terms & Conditions",
     defaultContent: termsDefaultContent,
@@ -48,7 +56,7 @@ const pageConfig = {
 
 type PageSlug = keyof typeof pageConfig
 
-type PageContentState = HomePageContent | AboutPageContent | LegalPageContent
+type PageContentState = HomePageContent | AboutPageContent | FounderPageContent | LegalPageContent
 
 export default function PageContentEditor() {
   const params = useParams<{ slug: string }>()
@@ -162,6 +170,7 @@ export default function PageContentEditor() {
 
   const homeContent = content as HomePageContent
   const aboutContent = content as AboutPageContent
+  const founderContent = content as FounderPageContent
   const legalContent = content as LegalPageContent
 
   return (
@@ -957,6 +966,122 @@ export default function PageContentEditor() {
                       onChange={(e) => updateField(["team", "description"], e.target.value)}
                     />
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {slug === "founder" && (
+          <div className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO</CardTitle>
+                <CardDescription>Search engine title and description for the founder page.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">SEO Title</label>
+                  <Input
+                    value={founderContent.seo.title}
+                    onChange={(e) => updateField(["seo", "title"], e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">SEO Description</label>
+                  <Textarea
+                    value={founderContent.seo.description}
+                    onChange={(e) => updateField(["seo", "description"], e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Hero</CardTitle>
+                <CardDescription>Top section shown on the dedicated founder page.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Badge</label>
+                  <Input
+                    value={founderContent.hero.badge}
+                    onChange={(e) => updateField(["hero", "badge"], e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Title</label>
+                  <Input
+                    value={founderContent.hero.title}
+                    onChange={(e) => updateField(["hero", "title"], e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea
+                    value={founderContent.hero.description}
+                    onChange={(e) => updateField(["hero", "description"], e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Founder Section</CardTitle>
+                <CardDescription>This content is reused on the About page and the founder page.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Eyebrow</label>
+                  <Input
+                    value={founderContent.founder.eyebrow}
+                    onChange={(e) => updateField(["founder", "eyebrow"], e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Name</label>
+                    <Input
+                      value={founderContent.founder.name}
+                      onChange={(e) => updateField(["founder", "name"], e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Role</label>
+                    <Input
+                      value={founderContent.founder.role}
+                      onChange={(e) => updateField(["founder", "role"], e.target.value)}
+                    />
+                  </div>
+                </div>
+                {founderContent.founder.paragraphs.map((paragraph, index) => (
+                  <div key={index} className="space-y-2">
+                    <label className="text-sm font-medium">Paragraph {index + 1}</label>
+                    <Textarea
+                      value={paragraph}
+                      onChange={(e) => updateField(["founder", "paragraphs", index], e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                ))}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Highlight Text</label>
+                  <Input
+                    value={founderContent.founder.highlight}
+                    onChange={(e) => updateField(["founder", "highlight"], e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Quote</label>
+                  <Textarea
+                    value={founderContent.founder.quote}
+                    onChange={(e) => updateField(["founder", "quote"], e.target.value)}
+                    rows={4}
+                  />
                 </div>
               </CardContent>
             </Card>

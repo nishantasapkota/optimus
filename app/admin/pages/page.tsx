@@ -15,6 +15,11 @@ const pages = [
     description: "Manage the About Us page story, mission, and leadership intro.",
   },
   {
+    slug: "founder",
+    title: "Founder",
+    description: "Manage the founder profile page and the founder section reused on About.",
+  },
+  {
     slug: "terms-and-conditions",
     title: "Terms & Conditions",
     description: "Manage legal terms content with a rich text editor.",

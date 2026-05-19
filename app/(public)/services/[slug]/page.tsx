@@ -1,12 +1,14 @@
-import { DetailLayout } from "@/components/public/detail-layout"
-import { getServiceBySlug, getServices } from "@/lib/db-utils"
-import { notFound } from "next/navigation"
 import Image from "next/image"
-import { CheckCircle2, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
+import { ArrowRight, CheckCircle2 } from "lucide-react"
+import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { getServiceBySlug, getServices } from "@/lib/db-utils"
+import { createPageMetadata } from "@/lib/seo"
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 interface ServiceDetailPageProps {
   params: Promise<{
@@ -14,12 +16,43 @@ interface ServiceDetailPageProps {
   }>
 }
 
+export async function generateMetadata({ params }: ServiceDetailPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const service = await getServiceBySlug(slug)
+
+  if (!service) {
+    return createPageMetadata({
+      title: "Service not found",
+      description: "The requested service page could not be found.",
+      path: `/services/${slug}`,
+      noIndex: true,
+    })
+  }
+
+  return createPageMetadata({
+    title: service.name,
+    description: service.shortDescription || service.name,
+    path: `/services/${slug}`,
+    noIndex: service.status !== "active",
+    images: service.icon
+      ? [
+          {
+            url: service.icon,
+            width: 1200,
+            height: 630,
+            alt: service.name,
+          },
+        ]
+      : undefined,
+  })
+}
+
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const { slug } = await params
-  
+
   let service = null
   let allServices: any[] = []
-  
+
   try {
     service = await getServiceBySlug(slug)
   } catch (error) {
@@ -27,27 +60,55 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
     notFound()
   }
 
-  if (!service) {
+  if (!service || service.status !== "active") {
     notFound()
   }
 
   try {
-    allServices = await getServices(10)
+    allServices = (await getServices(100)).filter((item) => item.status === "active")
   } catch (error) {
     console.error("Failed to fetch services for sidebar:", error)
   }
-  
+
   const sidebarItems = allServices
-    .filter(s => s.slug !== slug)
-    .map(s => ({
-      title: s.name,
-      href: `/services/${s.slug}`,
-      active: false
+    .filter((item) => item.slug !== slug)
+    .map((item) => ({
+      title: item.name,
+      href: `/services/${item.slug}`,
     }))
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+    { name: service.name, path: `/services/${service.slug}` },
+  ])
+
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.name,
+    description: service.shortDescription || service.name,
+    provider: {
+      "@type": "EducationalOrganization",
+      name: "Optimus Global",
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "Nepal",
+    },
+  }
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Premium Service Hero */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+
       <section className="relative h-[500px] flex items-center overflow-hidden bg-blue-950 pt-32 pb-20">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-full bg-[#050b1f]" />
@@ -58,8 +119,8 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
 
         <div className="container relative z-20">
           <div className="max-w-4xl">
-            <Link 
-              href="/services" 
+            <Link
+              href="/services"
               className="inline-flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest text-xs mb-6 hover:text-white transition-colors"
             >
               <ArrowRight className="w-4 h-4 rotate-180" /> Our Services
@@ -76,29 +137,26 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
 
       <div className="container py-20">
         <div className="grid lg:grid-cols-3 gap-16">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-12">
             {service.icon && (
               <div className="relative h-[450px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-gray-50">
-                <Image
-                  src={service.icon}
-                  alt={service.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={service.icon} alt={service.name} fill className="object-cover" />
               </div>
             )}
 
             <div className="prose prose-lg max-w-none prose-headings:text-blue-950 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-blue-950">
               <h2 className="text-3xl font-bold mb-6">Service Overview</h2>
               <div dangerouslySetInnerHTML={{ __html: service.description }} />
-              
+
               {service.features && service.features.length > 0 && (
                 <div className="mt-12 not-prose">
                   <h3 className="text-2xl font-bold text-blue-950 mb-8">What we provide</h3>
                   <div className="grid md:grid-cols-2 gap-6">
                     {service.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-100 group hover:bg-white hover:shadow-xl transition-all">
+                      <div
+                        key={idx}
+                        className="flex items-start gap-4 p-6 rounded-2xl bg-gray-50 border border-gray-100 group hover:bg-white hover:shadow-xl transition-all"
+                      >
                         <div className="p-2 rounded-lg bg-red-100 text-red-600 flex-shrink-0">
                           <CheckCircle2 className="w-5 h-5" />
                         </div>
@@ -111,9 +169,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1 space-y-10">
-            {/* Related Services */}
             <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 sticky top-32">
               <h3 className="text-xl font-bold text-blue-950 mb-6 flex items-center gap-2">
                 <div className="w-2 h-8 bg-red-600 rounded-full" />
@@ -121,8 +177,8 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
               </h3>
               <div className="space-y-3">
                 {sidebarItems.map((item, idx) => (
-                  <Link 
-                    key={idx} 
+                  <Link
+                    key={idx}
                     href={item.href}
                     className="flex justify-between items-center p-4 rounded-xl bg-white border border-transparent hover:border-red-200 hover:shadow-lg transition-all group"
                   >
@@ -132,19 +188,17 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
                 ))}
               </div>
 
-              {/* Quick Contact Card */}
               <div className="mt-10 p-8 rounded-2xl bg-blue-950 text-white relative overflow-hidden shadow-2xl">
-                 <div className="relative z-10">
-                    <h4 className="text-xl font-bold mb-4">Need Help?</h4>
-                    <p className="text-sm text-blue-200/70 mb-8 font-medium">Contact our experts for specialized advice on your global journey.</p>
-                    <Link href="/contact" className="w-full">
-                      <Button className="w-full bg-red-600 hover:bg-white hover:text-red-600 text-white h-14 rounded-xl font-bold transition-all shadow-lg shadow-red-600/20">
-                        GET IN TOUCH
-                      </Button>
-                    </Link>
-                 </div>
-                 {/* Decorative background circle */}
-                 <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-red-600/20 rounded-full blur-2xl" />
+                <div className="relative z-10">
+                  <h4 className="text-xl font-bold mb-4">Need Help?</h4>
+                  <p className="text-sm text-blue-200/70 mb-8 font-medium">Contact our experts for specialized advice on your global journey.</p>
+                  <Link href="/contact" className="w-full">
+                    <Button className="w-full bg-red-600 hover:bg-white hover:text-red-600 text-white h-14 rounded-xl font-bold transition-all shadow-lg shadow-red-600/20">
+                      GET IN TOUCH
+                    </Button>
+                  </Link>
+                </div>
+                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-red-600/20 rounded-full blur-2xl" />
               </div>
             </div>
           </div>

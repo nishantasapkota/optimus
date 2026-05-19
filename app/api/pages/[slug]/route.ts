@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getPageContent, upsertPageContent } from "@/lib/db-utils"
 import { requireAdmin } from "@/lib/api-auth"
 
-const allowedSlugs = new Set(["home", "about", "terms-and-conditions", "privacy-policy"])
+const allowedSlugs = new Set(["home", "about", "founder", "terms-and-conditions", "privacy-policy"])
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

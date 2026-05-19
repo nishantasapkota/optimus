@@ -126,6 +126,26 @@ export type AboutPageContent = {
   }
 }
 
+export type FounderPageContent = {
+  seo: {
+    title: string
+    description: string
+  }
+  hero: {
+    badge: string
+    title: string
+    description: string
+  }
+  founder: {
+    eyebrow: string
+    name: string
+    role: string
+    paragraphs: string[]
+    highlight: string
+    quote: string
+  }
+}
+
 export type LegalPageContent = {
   hero: {
     badge: string
@@ -390,6 +410,32 @@ export const aboutDefaultContent: AboutPageContent = {
   },
 }
 
+export const founderDefaultContent: FounderPageContent = {
+  seo: {
+    title: "Ashim Sharma Mainali | Founder of Optimus Global",
+    description:
+      "Learn about Ashim Sharma Mainali, CEO and Founder of Optimus Global Education Consultancy Pvt. Ltd., and his journey supporting Nepalese students abroad.",
+  },
+  hero: {
+    badge: "Founder Story",
+    title: "Meet the founder behind Optimus Global.",
+    description:
+      "A student-first journey that grew into an education consultancy helping Nepalese students navigate admissions, scholarships, visas, and career planning.",
+  },
+  founder: {
+    eyebrow: "Meet the Founder",
+    name: "Ashim Sharma Mainali",
+    role: "CEO & Founder - Optimus Global Education Consultancy Pvt. Ltd.",
+    paragraphs: [
+      "Ashim started his journey at a young age after facing the same difficulties countless Nepali students encounter while researching foreign universities. What began as a student-focused mobile app evolved into a full-fledged consultancy that has helped hundreds of students pursue international education.",
+      "A mentor, entrepreneur, and student counselor, Ashim brings 7+ years of expertise across admissions, scholarships, visas, and career planning.",
+    ],
+    highlight: "7+ years of expertise",
+    quote:
+      "We don't just send students abroad - we help create globally educated individuals who can one day transform Nepal.",
+  },
+}
+
 function mergeDeep<T>(base: T, incoming: Partial<T> | undefined): T {
   if (incoming === undefined) {
     return base
@@ -425,6 +471,10 @@ export function mergeHomeContent(incoming?: Partial<HomePageContent>) {
 
 export function mergeAboutContent(incoming?: Partial<AboutPageContent>) {
   return mergeDeep(aboutDefaultContent, incoming)
+}
+
+export function mergeFounderContent(incoming?: Partial<FounderPageContent>) {
+  return mergeDeep(founderDefaultContent, incoming)
 }
 
 export function mergeTermsContent(incoming?: Partial<LegalPageContent>) {

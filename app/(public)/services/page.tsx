@@ -1,141 +1,101 @@
-"use client"
-
-import { motion } from "framer-motion"
 import Image from "next/image"
-import { Check } from "lucide-react"
-import { PageHero } from "@/components/public/page-hero"
+import Link from "next/link"
+import { ArrowRight, CheckCircle2 } from "lucide-react"
 import { CtaJourney } from "@/components/public/cta-journey"
+import { PageHero } from "@/components/public/page-hero"
+import { Button } from "@/components/ui/button"
+import { getServices } from "@/lib/db-utils"
 
-const servicesData = [
-  {
-    title: "Career Counseling and Academic Guidance",
-    image: "/modern-office.png",
-    items: [
-      "Beyond Border Immigration",
-      "Strategic Portfolio Building",
-      "Direct University Relations",
-      "Scholarship Maximization",
-      "Certified Mentorship"
-    ],
-    reverse: false
-  },
-  {
-    title: "Visa and Migration Consultation",
-    image: "/professional-team-meeting.png",
-    items: [
-      "Beyond Border Immigration",
-      "High Visa Success Rate",
-      "Document Verification",
-      "Legal Guidance",
-      "Relocation Assistance"
-    ],
-    reverse: true
-  },
-  {
-    title: "Test Preparation (IELTS / PTE / TOEFL)",
-    image: "/modern-product-display.png",
-    items: [
-      "Beyond Border Immigration",
-      "Mock Test Simulations",
-      "Strategy Workshops",
-      "Certified Instructors",
-      "Performance Analytics"
-    ],
-    reverse: false
-  },
-  {
-      title: "Logistics and Post-Departure Support",
-      image: "/destinations/australia.png",
-      items: [
-        "Beyond Border Immigration",
-        "Accommodation Services",
-        "Airport Pickup",
-        "Cultural Orientation",
-        "Job Search Assistance"
-      ],
-      reverse: true
-    }
-]
+export const dynamic = "force-dynamic"
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  let services = []
+
+  try {
+    const fetchedServices = await getServices(200)
+    services = fetchedServices.filter((service) => service.status === "active")
+  } catch (error) {
+    console.error("Failed to fetch services:", error)
+  }
+
   return (
-    <div className="flex flex-col gap-0 bg-white min-h-screen">
-      <PageHero 
+    <div className="flex min-h-screen flex-col gap-0 bg-white">
+      <PageHero
         title="Services"
-        description="Comprehensive support cover every stage of your journey – from identifying the right universities to pre-departure orientation."
+        description="Comprehensive support across admissions, visa planning, academic guidance, and test preparation."
         breadcrumbItems={[{ label: "Services" }]}
       />
 
-      {/* Intro Text */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container max-w-4xl text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-lg md:text-xl text-gray-600 font-medium leading-relaxed"
-          >
-            Optimus Global Education Provides wide range of services cover every stage of your journey – from identifying the right universities to pre-departure orientation. This ensures a smooth and hassle-free process, allowing you to focus on your strengths and aspirations – to fulfill your dream of studying in your Dreamland.
-          </motion.p>
+          <p className="text-lg md:text-xl text-gray-600 font-medium leading-relaxed">
+            Explore all active service pages managed from the CMS. Add, remove, or update any service from the admin panel and it will flow through here automatically.
+          </p>
         </div>
       </section>
 
-      {/* Alternating Services */}
       <section className="pb-24 space-y-24">
-        {servicesData.map((service, index) => (
-          <ServiceRow key={index} {...service} />
-        ))}
+        {services.length === 0 ? (
+          <div className="container">
+            <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center">
+              <h2 className="text-2xl font-bold text-blue-950">No active services published yet.</h2>
+              <p className="mt-3 text-sm font-medium text-slate-600">Create or activate services in the admin CMS to show them on this page.</p>
+            </div>
+          </div>
+        ) : (
+          services.map((service, index) => (
+            <div key={service.slug} className="container">
+              <div className={`flex flex-col ${index % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 lg:gap-20`}>
+                <div className="w-full lg:w-3/5">
+                  <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-[2rem] shadow-2xl">
+                    <Image
+                      src={service.icon || "/placeholder.jpg"}
+                      alt={service.name}
+                      fill
+                      className="object-cover"
+                      sizes="(min-width: 1024px) 55vw, 100vw"
+                    />
+                  </div>
+                </div>
+
+                <div className={`relative z-10 w-full lg:w-2/5 -mt-20 lg:mt-0 ${index % 2 === 1 ? "lg:-mr-32" : "lg:-ml-32"}`}>
+                  <div className="rounded-[2rem] border border-gray-50 bg-white p-10 shadow-2xl shadow-gray-200/50">
+                    <p className="text-xs font-bold uppercase tracking-[0.3em] text-red-600">{service.category}</p>
+                    <h2 className="mt-5 text-xl md:text-2xl font-bold text-blue-950 leading-tight">
+                      {service.name}
+                    </h2>
+                    <p className="mt-4 text-sm font-medium leading-relaxed text-slate-600">{service.shortDescription}</p>
+                    <div className="mt-8 space-y-4">
+                      {service.features?.slice(0, 5).map((item) => (
+                        <div key={item} className="flex items-center gap-3">
+                          <div className="rounded-md bg-blue-50 p-1 text-blue-600">
+                            <CheckCircle2 className="h-4 w-4" />
+                          </div>
+                          <span className="text-gray-600 font-medium">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <Link href={`/services/${service.slug}`} className="mt-8 inline-flex items-center text-sm font-bold text-red-600 hover:text-blue-950">
+                      View service page
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </section>
 
-      <CtaJourney />
-    </div>
-  )
-}
-
-function ServiceRow({ title, image, items, reverse }: { title: string, image: string, items: string[], reverse: boolean }) {
-  return (
-    <div className="container">
-      <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12 lg:gap-20`}>
-        {/* Image Side */}
-        <motion.div
-          initial={{ opacity: 0, x: reverse ? 30 : -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full lg:w-3/5"
-        >
-          <div className="relative h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover"
-            />
-          </div>
-        </motion.div>
-
-        {/* Card Side */}
-        <motion.div
-          initial={{ opacity: 0, x: reverse ? -30 : 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className={`w-full lg:w-2/5 -mt-20 lg:mt-0 ${reverse ? 'lg:-mr-32' : 'lg:-ml-32'} relative z-10`}
-        >
-          <div className="bg-white p-10 rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-50">
-            <h3 className="text-xl md:text-2xl font-bold text-blue-950 mb-8 leading-tight">
-              {title}
-            </h3>
-            <ul className="space-y-4">
-              {items.map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3">
-                  <div className="p-1 rounded-md bg-blue-50 text-blue-600">
-                    <Check className="w-4 h-4" />
-                  </div>
-                  <span className="text-gray-600 font-medium">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </motion.div>
+      <div className="container pb-24">
+        <Link href="/online-consultation">
+          <Button className="h-12 rounded-xl bg-blue-950 px-6 text-sm font-semibold text-white hover:bg-red-600">
+            Book A Consultation
+          </Button>
+        </Link>
       </div>
+
+      <CtaJourney />
     </div>
   )
 }

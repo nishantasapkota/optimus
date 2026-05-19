@@ -5,7 +5,9 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ToastProvider, ToastViewport } from "@/components/ui/toast";
 import { Toaster } from "sonner";
+import { getBusinessDetails } from "@/lib/db-utils";
 import { defaultSeoDescription, getSiteUrl, siteName } from "@/lib/seo";
+import { buildSitewideJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -44,15 +46,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let structuredData = buildSitewideJsonLd()
+
+  try {
+    const businessDetails = await getBusinessDetails()
+    structuredData = buildSitewideJsonLd(businessDetails)
+  } catch (error) {
+    console.error("Failed to load business details for structured data:", error)
+  }
+
   return (
     <html lang="en">
 
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        {structuredData.map((entry, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+          />
+        ))}
         <ToastProvider>
           {children}
           <ToastViewport />

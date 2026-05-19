@@ -10,8 +10,14 @@ import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
 
 type DestinationsContent = HomePageContent["destinations"]
 
-export function Destinations({ content }: { content?: DestinationsContent }) {
-  const destinations = content?.items ?? homeDefaultContent.destinations.items
+export function Destinations({
+  content,
+  items,
+}: {
+  content?: DestinationsContent
+  items?: DestinationsContent["items"]
+}) {
+  const destinations = items?.length ? items : content?.items ?? homeDefaultContent.destinations.items
   const eyebrow = content?.eyebrow ?? homeDefaultContent.destinations.eyebrow
   const title = content?.title ?? homeDefaultContent.destinations.title
   const viewAllLabel = content?.viewAllLabel ?? homeDefaultContent.destinations.viewAllLabel

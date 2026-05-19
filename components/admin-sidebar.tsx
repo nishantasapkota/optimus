@@ -11,6 +11,7 @@ import {
   BookOpen,
   Briefcase,
   Calendar,
+  Map,
   ImageIcon,
   Globe,
   Handshake,
@@ -42,6 +43,11 @@ const navigation = [
     name: "Services",
     href: "/admin/services",
     icon: Briefcase,
+  },
+  {
+    name: "Destinations",
+    href: "/admin/destinations",
+    icon: Map,
   },
   {
     name: "Applications",
