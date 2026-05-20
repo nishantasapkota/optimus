@@ -30,8 +30,8 @@ export async function generateMetadata({ params }: ServiceDetailPageProps): Prom
   }
 
   return createPageMetadata({
-    title: service.name,
-    description: service.shortDescription || service.name,
+    title: service.metaTitle || service.name,
+    description: service.metaDescription || service.shortDescription || service.name,
     path: `/services/${slug}`,
     noIndex: service.status !== "active",
     images: service.icon
@@ -86,8 +86,8 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: service.name,
-    description: service.shortDescription || service.name,
+    name: service.metaTitle || service.name,
+    description: service.metaDescription || service.shortDescription || service.name,
     provider: {
       "@type": "EducationalOrganization",
       name: "Optimus Global",

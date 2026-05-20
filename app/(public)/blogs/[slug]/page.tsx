@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: BlogDetailPageProps): Promise
     })
   }
 
-  const title = cleanText(blog.title)
-  const description = buildSeoDescription(blog.excerpt, blog.content)
+  const title = cleanText(blog.metaTitle || blog.title)
+  const description = cleanText(blog.metaDescription) || buildSeoDescription(blog.excerpt, blog.content)
   const imageUrl = getShareImageUrl(blog.featuredImage) || `/api/og/blogs/${slug}`
   const publishedTime = blog.publishedAt?.toISOString?.() ?? blog.createdAt?.toISOString?.()
   const modifiedTime = blog.updatedAt?.toISOString?.()
@@ -89,8 +89,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: cleanText(blog.title),
-    description: buildSeoDescription(blog.excerpt, blog.content),
+    headline: cleanText(blog.metaTitle || blog.title),
+    description: cleanText(blog.metaDescription) || buildSeoDescription(blog.excerpt, blog.content),
     image: absoluteUrl(getShareImageUrl(blog.featuredImage) || `/api/og/blogs/${slug}`),
     datePublished: publishedTime,
     dateModified: modifiedTime,

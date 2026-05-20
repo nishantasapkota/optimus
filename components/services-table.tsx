@@ -21,7 +21,6 @@ export function ServicesTable({ services, onEdit, onDelete }: ServicesTableProps
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -30,7 +29,7 @@ export function ServicesTable({ services, onEdit, onDelete }: ServicesTableProps
         <TableBody>
           {services.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-muted-foreground">
+              <TableCell colSpan={5} className="text-center text-muted-foreground">
                 No services found
               </TableCell>
             </TableRow>
@@ -39,9 +38,6 @@ export function ServicesTable({ services, onEdit, onDelete }: ServicesTableProps
               <TableRow key={service._id?.toString()}>
                 <TableCell className="font-medium">{service.name}</TableCell>
                 <TableCell>{service.category}</TableCell>
-                <TableCell>
-                  {service.currency} {service.price.toFixed(2)}
-                </TableCell>
                 <TableCell>
                   <Badge variant={service.status === "active" ? "default" : "secondary"}>{service.status}</Badge>
                 </TableCell>

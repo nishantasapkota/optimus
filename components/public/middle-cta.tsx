@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { homeDefaultContent, type HomePageContent } from "@/lib/page-content"
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { homeDefaultContent, type HomePageContent } from "@/lib/page-content";
 
-type MiddleCtaContent = HomePageContent["middleCta"]
+type MiddleCtaContent = HomePageContent["middleCta"];
 
 export function MiddleCTA({ content }: { content?: MiddleCtaContent }) {
-  const section = content ?? homeDefaultContent.middleCta
+  const section = content ?? homeDefaultContent.middleCta;
 
   return (
     <section className="py-20 bg-white">
@@ -38,7 +38,7 @@ export function MiddleCTA({ content }: { content?: MiddleCtaContent }) {
           className="relative h-[300px] md:h-[500px] rounded-[2rem] overflow-hidden mb-12 shadow-2xl"
         >
           <Image
-            src="/banner.jpeg"
+            src="/Vector.png"
             alt="City view"
             fill
             className="object-cover"

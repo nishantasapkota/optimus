@@ -45,6 +45,8 @@ export function BlogDialog({
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
+    metaTitle: "",
+    metaDescription: "",
     content: "",
     excerpt: "",
     author: "",
@@ -58,6 +60,8 @@ export function BlogDialog({
       setFormData({
         title: blog.title,
         slug: blog.slug,
+        metaTitle: blog.metaTitle || "",
+        metaDescription: blog.metaDescription || "",
         content: blog.content,
         excerpt: blog.excerpt,
         author: blog.author,
@@ -69,6 +73,8 @@ export function BlogDialog({
       setFormData({
         title: "",
         slug: "",
+        metaTitle: "",
+        metaDescription: "",
         content: "",
         excerpt: "",
         author: "",
@@ -150,6 +156,31 @@ export function BlogDialog({
               }
               rows={2}
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="metaTitle">Meta Title</Label>
+            <Input
+              id="metaTitle"
+              value={formData.metaTitle}
+              onChange={(e) =>
+                setFormData({ ...formData, metaTitle: e.target.value })
+              }
+              placeholder="Optional custom SEO title"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="metaDescription">Meta Description</Label>
+            <Textarea
+              id="metaDescription"
+              value={formData.metaDescription}
+              onChange={(e) =>
+                setFormData({ ...formData, metaDescription: e.target.value })
+              }
+              rows={3}
+              placeholder="Optional custom SEO description"
             />
           </div>
 

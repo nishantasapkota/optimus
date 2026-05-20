@@ -128,6 +128,8 @@ export interface Blog {
   _id?: ObjectId
   title: string
   slug: string
+  metaTitle?: string
+  metaDescription?: string
   content: string
   excerpt: string
   author: string
@@ -143,10 +145,10 @@ export interface Service {
   _id?: ObjectId
   name: string
   slug: string
+  metaTitle?: string
+  metaDescription?: string
   description: string
   shortDescription: string
-  price: number
-  currency: string
   status: "active" | "inactive"
   category: string
   features: string[]

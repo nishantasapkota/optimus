@@ -27,10 +27,10 @@ export function ServiceDialog({ open, onOpenChange, service, onSave }: ServiceDi
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    metaTitle: "",
+    metaDescription: "",
     description: "",
     shortDescription: "",
-    price: 0,
-    currency: "USD",
     status: "active" as "active" | "inactive",
     category: "",
     features: "",
@@ -42,10 +42,10 @@ export function ServiceDialog({ open, onOpenChange, service, onSave }: ServiceDi
       setFormData({
         name: service.name,
         slug: service.slug,
+        metaTitle: service.metaTitle || "",
+        metaDescription: service.metaDescription || "",
         description: service.description,
         shortDescription: service.shortDescription,
-        price: service.price,
-        currency: service.currency,
         status: service.status,
         category: service.category,
         features: service.features?.join(", ") || "",
@@ -55,10 +55,10 @@ export function ServiceDialog({ open, onOpenChange, service, onSave }: ServiceDi
       setFormData({
         name: "",
         slug: "",
+        metaTitle: "",
+        metaDescription: "",
         description: "",
         shortDescription: "",
-        price: 0,
-        currency: "USD",
         status: "active",
         category: "",
         features: "",
@@ -120,6 +120,27 @@ export function ServiceDialog({ open, onOpenChange, service, onSave }: ServiceDi
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="metaTitle">Meta Title</Label>
+            <Input
+              id="metaTitle"
+              value={formData.metaTitle}
+              onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+              placeholder="Optional custom SEO title"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="metaDescription">Meta Description</Label>
+            <Textarea
+              id="metaDescription"
+              value={formData.metaDescription}
+              onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+              rows={3}
+              placeholder="Optional custom SEO description"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="description">Full Description</Label>
             <RichTextEditor
               value={formData.description}
@@ -128,34 +149,7 @@ export function ServiceDialog({ open, onOpenChange, service, onSave }: ServiceDi
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number.parseFloat(e.target.value) })}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="currency">Currency</Label>
-              <Select
-                value={formData.currency}
-                onValueChange={(value) => setFormData({ ...formData, currency: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="GBP">GBP</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
