@@ -128,7 +128,7 @@ export default async function HomePage() {
       <Contact content={homeContent.contact} />
       <CtaJourney content={homeContent.ctaJourney} />
       <Testimonials content={homeContent.testimonials} />
-      <HomePopup initialEvent={event} />
+      {homeContent.popup.enabled ? <HomePopup initialEvent={event} /> : null}
     </div>
   )
 }

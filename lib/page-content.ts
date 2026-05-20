@@ -1,4 +1,7 @@
 export type HomePageContent = {
+  popup: {
+    enabled: boolean
+  }
   hero: {
     badge: string
     titlePrefix: string
@@ -157,6 +160,9 @@ export type LegalPageContent = {
 }
 
 export const homeDefaultContent: HomePageContent = {
+  popup: {
+    enabled: true,
+  },
   hero: {
     badge: "2025",
     titlePrefix: "Applications are open for",

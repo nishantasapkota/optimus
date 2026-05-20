@@ -95,7 +95,7 @@ export default function PageContentEditor() {
       .finally(() => setLoading(false))
   }, [slug, config])
 
-  const updateField = (path: Array<string | number>, value: string) => {
+  const updateField = (path: Array<string | number>, value: string | boolean) => {
     setContent((prev) => {
       if (!prev) return prev
       const next = cloneDeep(prev) as any
@@ -183,6 +183,29 @@ export default function PageContentEditor() {
       <form onSubmit={handleSave} className="space-y-8">
         {slug === "home" && (
           <div className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Popup</CardTitle>
+                <CardDescription>Control whether the homepage event popup appears.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <label className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-foreground">Enable homepage popup</p>
+                    <p className="text-sm text-muted-foreground">
+                      Turn this off to hide the popup for all homepage visitors.
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={homeContent.popup.enabled}
+                    onChange={(e) => updateField(["popup", "enabled"], e.target.checked)}
+                    className="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary"
+                  />
+                </label>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Hero</CardTitle>
